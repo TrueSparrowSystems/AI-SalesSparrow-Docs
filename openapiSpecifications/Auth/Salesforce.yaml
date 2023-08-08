@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Connect API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+paths:
+  /v1/auth/salesforce/redirect-url:
+    get:
+      description: Api will return the redirect url 
+      parameters:
+          - name: redirect_uri
+            in: query
+            description: Redirect uri for oauth.
+            required: true
+            schema:
+              type: string
+          - name: state
+            in: query
+            description: State
+            required: false
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: 'https://test.salesforce.com/services/oauth2/authorize?response_type=code&client_id=12345&redirect_uri=http://localhost:3000&state=12345'
+
+  /v1/auth/salesforce/connect:
+    post:
+      description: Api to connect SalesSparrow to salesforce user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: 'aPrxCd8nVGMK1dqdVY8T_f19rz9P.Qh1TkPZr_C4_nlLXqGCQ.lb1SDkExNY3YvplkdqF_0hng=='
+                redirect_uri:
+                  type: string
+                  example: 'http://localhost:3000&state=12345'
+              required:
+                - code
+                - redirect_uri
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_user:
+                    type: object
+                    properties:
+                      id: 
+                        type: string
+                        example: "0caa56f9-2abd-45b2-8469-e41d3e692eaa"
+                      name:
+                        type: string
+                        example: 'sample user'
+                      email:
+                        type: string
+                        example: 'sampleuser@gmail.com'
+                          
+  /v1/auth/logout:
+    post:
+      description: Api to logout user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}

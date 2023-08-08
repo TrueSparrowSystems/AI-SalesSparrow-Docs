@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Account Notes API's
+  description: Following api's will be called from the SalesSparrow application
+  version: 1.0.0
+servers:
+  - url: https://sales.truesparrow.com/api
+paths:
+  /v1/accounts/{account_id}/notes:
+    get:
+      description: Api will return list of notes for accountId
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_ids:
+                    type: array
+                    items:
+                      type: string
+                      example: "0691e000001WXlcAAG"
+                  note_map_by_id:
+                    type: object
+                    properties:
+                      0691e000001WXlcAAG:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "0691e000001WXlcAAG"
+                          creator:
+                            type: string
+                            example: "xyz"
+                          text_preview: 
+                            type: string
+                            example: "Note Full Content"
+                          last_modified_time:
+                            type: string
+                            format: date-time
+                            example: "2019-10-12T07:20:50.52Z"
+                        
+  /v1/accounts/{account_id}/notes/{note_id}:
+    get:
+      description: Fetch details of note by note id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          description: Note Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_detail:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "0691e000001WXlcAAG"
+                      creator:
+                        type: string
+                        example: "xyz"
+                      text: 
+                        type: string
+                        example: "Note Full Content"
+                      last_modified_time:
+                        type: string
+                        format: date-time
+                        example: "2019-10-12T07:20:50.52Z"
+                        
+  /v1/accounts/{account_id}/note:
+    post:
+      description: Api will create note for accountId
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'Content of note'
+              required:
+                - text
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_id:
+                    type: string
+                    example: "0691e000001WXlcAAG"

@@ -1,0 +1,41 @@
+sequenceDiagram
+  title Get Note List API
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+
+    box Black 
+    participant factory as SalesSparrow Factory 
+    end
+    participant server as SalesSparrow Server
+
+    ui->>api:  Send request 
+    note right of ui: Request: <br>GET {api_base_url}/api/v1/accounts/{account_id}/notes<br><br>query params: <br>account_id (Account Id to fecth note list) <br>
+
+    note over api: Validate and fetch user data from cookie
+    alt If user not found
+        api-->>ui: User Not Found
+    end
+
+    api->>factory: Send params
+
+    opt Unsucessfull parameter handling
+        api-->>ui: Invalid Parameters
+    end
+
+    factory->>server: Make salesforce composite api call
+    note right of factory: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = 'accountId'<br>referenceId: "GetContentDocumentId"<br>
+
+    server-->>factory: Salesforce Response
+    note over factory:  Make a List of ContentDocumentId from response
+
+    factory->>server: Make salesforce composite api call
+    note right of factory: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Title, TextPreview, ContentModifiedDate , CreatedBy.Name FROM ContentNote <br>WHERE Id in ('GetContentDocumentId[0]', 'GetContentDocumentId[1]')<br>referenceId: "GetContentNotes"<br>
+
+    server-->>factory: Salesforce Response
+    note over factory:  Format Salesforce Response
+
+    factory-->>api: Salessparrow Response
+    note right of api: {note_ids:[], note_map_by_id: {}}
+
+    api-->>ui: Response
+    note right of ui: Response body: <br>note_ids, note_map_by_id<br><br>Response headers:<br> cookie 
