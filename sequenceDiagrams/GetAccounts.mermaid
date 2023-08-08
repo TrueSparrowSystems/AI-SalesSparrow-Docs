@@ -1,0 +1,35 @@
+sequenceDiagram
+  title Get Accounts
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+    participant salesforce as Salesforce 
+    participant dynamoDb as AWS DynamoDb
+
+    ui->>api:  Send request
+    note right of ui: Request: POST {api_base_url}/v1/accounts<br><br>Body params: <br>q (Search account string) [optional] <br>
+
+    note over api: Validate and fetch user data from cookie
+    alt If user not found
+        api-->>ui: User Not Found
+    end
+
+    note over api: Format q (Search String)
+    note over api: Call Get Accounts Factory
+    note over api: Call Salesforce Get Accounts
+    
+    api->>dynamoDb: Get SalesforceOauthToken data using salesforceUserId
+    dynamoDb-->>api: Response (SalesforceOauthToken)
+
+    api ->> salesforce: Make salesforce composite api call with instance_url from SalesforceOauthToken
+    note right of api: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=QUERY_STRING"<br>referenceId: "getAccounts"<br>
+    note over salesforce: Calls Salesforce OAuth API Flow [Refer SalesforceOAuthApiFlow.mermaid]
+
+    alt
+        salesforce-->>api: Error Response
+        api -->> ui: Error Response
+    end
+
+    salesforce-->>api: Salesforce Response
+    note over api:  Format Salesforce Response
+    api-->>ui: Get Accounts Response 
+    note left of api: Response <br><br> {<br>account_ids:[],<br> account_map_by_id: {}<br>}

@@ -1,0 +1,45 @@
+sequenceDiagram
+  title Salesforce OAuth API Flow
+
+    participant api AS SalesSparrow API
+    participant salesforce AS Salesforce
+    participant dynamoDb as AWS DynamoDb
+    participant kms as AWS KMS
+
+    api->>dynamoDb: Get SalesforceOauthToken data using salesforceUserId
+
+    dynamoDb-->>api: Response (SalesforceOauthToken)
+
+    api->>kms: Decrypt(Access Token)
+
+    kms-->>api: Response (decrypted Access Token)
+
+    api->>salesforce: Make Http Request 
+    note right of api: HTTP Request <br><br> Headers: Set Access Token in Headers
+    alt
+        salesforce-->>api: Error Response (Expired Token)
+        api->>dynamoDb: Get SalesforceOauthToken data using salesforceUserId
+        dynamoDb-->>api: Response (SalesforceOauthToken)
+        api->>kms: Decrypt(Refresh Token)
+        kms-->>api: Response (decrypted Refresh Token)
+        api->>salesforce: Send request
+        note right of api: Request: POST {salesforce_base_url}/services/oauth2/token<br><br>Body params: <br>grant_type [mandatory] <br>client_id [mandatory]<br>client_secret [mandatory] <br>refresh_token [mandatory]
+        alt If any error from salesforce server
+            salesforce-->>api: Error 
+        end
+        salesforce-->>api: Success Response
+        note over api: Get Access Token from Response Body
+        api->>kms: Encrypt(Access Token)
+        kms-->>api: Response (encrypted Access Token)
+        api->>dynamoDb: Update Encrypted Access Token in database
+        api->>salesforce: Make Http Request 
+        note right of api: HTTP Request <br><br> Headers: Set Access Token in Headers
+        alt If any error from salesforce server
+            salesforce-->>api: Error
+        end
+        salesforce-->>api: Success Response   
+    else 
+        salesforce-->>api: Error Response (Other)
+    else 
+        salesforce-->>api: Success Response
+    end
