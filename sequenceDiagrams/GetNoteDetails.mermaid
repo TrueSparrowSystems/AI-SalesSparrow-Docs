@@ -3,7 +3,7 @@ sequenceDiagram
     participant ui as SalesSparrow App
     participant api as SalesSparrow API
 
-    box Black 
+    box 
     participant factory as SalesSparrow Factory 
     end
     participant server as SalesSparrow Server
@@ -13,13 +13,13 @@ sequenceDiagram
 
     note over api: Validate and fetch user data from cookie
     alt If user not found
-        api-->>ui: User Not Found
+        api-->>ui: Error Response<br>User Not Found
     end
 
     api->>factory: Send params
 
-    opt Unsucessfull parameter handling
-        api-->>ui: Invalid Parameters
+    alt If mandatory params not present in the body
+        factory-->>ui: Error Response<br>Mandatory param missing error
     end
 
     factory->>server: Make salesforce composite api call
@@ -29,9 +29,7 @@ sequenceDiagram
     note right of factory: Request: POST {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
 
     alt If any error from salesforce server
-        server-->>factory: Error 
-        factory-->>api: Error
-        api-->>ui: Error Response 
+        server-->>ui: Error Response 
     end
 
     server-->>factory: Salesforce Response
