@@ -1,0 +1,15 @@
+sequenceDiagram
+  title Get Redirect Url
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+    ui->>api:  Send request 
+    note right of ui: Request: GET {api_base_url}/v1/auth/salesforce/redirect-url<br><br>Query params: <br>redirect_uri [mandatory] <br>state [optional] 
+
+    note over api: Validate and sanitize the query params
+    alt If mandatory params not present in the body
+        api-->>ui: Mandatory param missing error
+    end
+
+    note over api: Construct the redirect Url using query params and 
+    api-->>ui: Response 
+    note right of ui: Response body: <br>url

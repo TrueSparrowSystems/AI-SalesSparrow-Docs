@@ -1,0 +1,16 @@
+sequenceDiagram
+  title Get Current User API
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+
+    ui->>api:  Send request 
+    note right of ui: Request: <br>GET {api_base_url}/api/v1/users/current
+
+    note over api: Validate and fetch user data from cookie
+    alt If user not found
+        api-->>ui: Error Response<br>User Not Found
+    end
+    note over api: Set the current user
+
+    api-->>ui: Response
+    note right of ui: Response body: <br>current_user
