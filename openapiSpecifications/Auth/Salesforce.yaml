@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: SalesSparrow Connect API's
+  title: SalesSparrow Salesforce oAuth API's
   description: Following api's will be called from the sales sparrow application
   version: '1.0'
 servers:
@@ -73,15 +73,3 @@ paths:
                       email:
                         type: string
                         example: 'sampleuser@gmail.com'
-                          
-  /v1/auth/logout:
-    post:
-      description: Api to logout user
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                example: {}

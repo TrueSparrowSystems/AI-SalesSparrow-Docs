@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Auth API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+paths:                    
+  /v1/auth/logout:
+    post:
+      description: Api to logout user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example: {}

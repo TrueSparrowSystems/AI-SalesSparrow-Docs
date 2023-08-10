@@ -4,12 +4,14 @@ Welcome to the OpenAPI documentation for SalesSparrow.
 
 Below you will find a list of all OpenAPI specifications. Each specification is a YAML file that describes the API endpoints, their parameters and responses.
 
-- [Auth: Salesforce](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/openapiSpecifications/Auth/Salesforce.yaml)
+- [Auth](Auth/Index.yaml)
 
-- [Accounts](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/openapiSpecifications/Accounts.yaml)
+- [Auth: Salesforce](Auth/Salesforce.yaml)
 
-- [Notes](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/openapiSpecifications/Notes.yaml)
+- [Accounts](Accounts.yaml)
 
-- [Users](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/openapiSpecifications/index.md)
+- [Notes](Notes.yaml)
+
+- [Users](Users.yaml)
 
 

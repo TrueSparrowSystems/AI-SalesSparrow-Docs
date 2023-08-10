@@ -90,7 +90,7 @@ paths:
                         format: date-time
                         example: "2019-10-12T07:20:50.52Z"
                         
-  /v1/accounts/{account_id}/note:
+  /v1/accounts/{account_id}/notes:
     post:
       description: Api will create note for accountId
       parameters:
