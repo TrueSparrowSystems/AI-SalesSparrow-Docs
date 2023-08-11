@@ -1,6 +1,6 @@
 sequenceDiagram
   title Get Note Details
-    participant ui as SalesSparrow Client
+    participant ui as SalesSparrow App
     participant api as SalesSparrow API
     participant exceptionHandler as Global Exception Handler
     participant validator as Param Validator(Interceptor)
@@ -9,6 +9,7 @@ sequenceDiagram
     participant factory as GetNoteDetails Factory
     participant crm as Salesforce GetNoteDetails Service
     participant helper as CompositeRequest Helper 
+    participant wrapper as Salesforce Wrapper
     participant salesforce as Salesforce
     participant formatter as GetNoteDetails Formmatter
 
@@ -37,7 +38,7 @@ sequenceDiagram
 
     factory->>crm: Call getNoteDetails method of particular CRM service<br>params: current_user, noteId
 
-    note over crm: fetch salesforceUserId from request<br> which was set by interceptor
+    note over crm: fetch salesforceUserId from request current_user
     break If salesforceUserId is not present in current_user.
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return error response 
@@ -56,16 +57,23 @@ sequenceDiagram
     salesforce-->>helper: Response
     helper-->>crm: Response
 
-    crm->>salesforce: Make salesforce api call for Content
-    note right of crm: Request: POST {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
+    note over crm: Set Response as noteDetailsResponse 
+
+    crm->>wrapper: Call MakeRequest of wrapper<br> params: method, Url
+
+    wrapper->>salesforce: Make salesforce api call for Content
+    note right of wrapper: Request: GET {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
 
     break If any error from salesforce
-        salesforce-->>crm: Error
-        crm->>exceptionHandler: Throws exeption
+        salesforce-->>wrapper: Error
+        wrapper->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui: Return error response
     end
 
-    salesforce-->>crm: Response
+    salesforce-->>wrapper: Response
+    wrapper-->>crm: Response
+
+    note over crm: Set Response as noteContentResponse
 
     crm->>formatter: Format Response into GetNoteDetailsFormatterDto<br>Params: noteDetailsResponse, noteContentResponse
     break If any error occur in formatter
