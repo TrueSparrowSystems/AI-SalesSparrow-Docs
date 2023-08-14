@@ -1,0 +1,30 @@
+sequenceDiagram
+  title SalesSparrow Logout
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant auth as Auth Interceptor
+    participant controller as Auth controller
+    participant helper as Cookie Helper Lib
+    
+    ui->>api:  Send request 
+    note right of ui: Request: POST {api_base_url}/v1/auth/logout
+
+    api->>auth: Validate user cookie
+
+    note over auth: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/UserAuthIntercepter.mermaid'
+
+    break If cookie validation error
+        auth ->> exceptionHandler: Throws exception
+        exceptionHandler -->> ui: Return error response
+    end
+
+    auth->>controller: Controller specific logic execution starts
+
+    controller->>helper: Call clearUserCookie method of cookie helper lib <br> param: headers 
+    note over helper: Unset cookie value and change expiry to -1
+    helper-->>controller: Response (headers)
+
+    note over controller: Add headers to response
+
+    controller-->>ui: Success
