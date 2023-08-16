@@ -10,7 +10,7 @@ sequenceDiagram
     ui->>api: send request
 
     api->>interceptor: fetch current user data from cookie by interceptor
-    note right of api: Register userAuthInterceptor if PathPatterns are following<br>"/api/v1/users/**"<br>"/api/v1/auth/logout"<br>"/api/v1/accounts/**"
+    note right of api: Register userAuthInterceptor excluding following PathPatterns<br>"/api/v1/auth/salesforce/**"
 
     note over interceptor: getCookieValue from incoming request
 

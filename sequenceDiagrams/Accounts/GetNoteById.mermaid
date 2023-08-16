@@ -1,5 +1,5 @@
 sequenceDiagram
-  title Get Note Details
+  title Get Note by Id
     participant ui as SalesSparrow App
     participant api as SalesSparrow API
     participant exceptionHandler as Global Exception Handler
@@ -8,15 +8,14 @@ sequenceDiagram
     participant service as GetNoteDetails Service
     participant factory as GetNoteDetails Factory
     participant crm as Salesforce GetNoteDetails Service
-    participant helper as CompositeRequest Helper 
-    participant wrapper as Salesforce Wrapper
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant GetNoteRequestWrapper as  GetNoteRequest(Wrapper)
     participant salesforce as Salesforce
-    participant formatter as GetNoteDetails Formmatter
 
     ui->>api:  Send request 
     note right of ui: Request: <br>GET {api_base_url}/accounts/{account_id}/notes/{note_id}<br><br>path params:  <br>note_id (NoteId to fecth details of note)<br>account_id 
 
-    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/UserAuthIntercepter.mermaid'
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
     break If current_user not found
         api-->>ui: Error Response<br>current_user Not Found
     end
@@ -43,48 +42,44 @@ sequenceDiagram
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return error response 
     end
-    crm->>helper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
-    helper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/CommonRequestHelper.mermaid'
-    note right of helper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Title, TextPreview, ContentModifiedDate , CreatedBy.Name FROM ContentNote <br>WHERE Id = note_id<br>referenceId: "GetContentNotes"<br>
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Title, TextPreview, ContentModifiedDate , CreatedBy.Name FROM ContentNote <br>WHERE Id = note_id<br>referenceId: "GetContentNotes"<br>
     
     break If any error from salesforce
-        salesforce-->>helper: Error
-        helper->>exceptionHandler: Throws exeption
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui: Return error response
     end
 
-    salesforce-->>helper: Response
-    helper-->>crm: Response
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
 
     note over crm: Set Response as noteDetailsResponse 
 
-    crm->>wrapper: Call MakeRequest of wrapper<br> params: method, Url
+    crm->>GetNoteRequestWrapper: Call MakeRequest of GetNoteRequestWrapper<br> params: method, Url
 
-    wrapper->>salesforce: Make salesforce api call for Content
-    note right of wrapper: Request: GET {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
+    GetNoteRequestWrapper->>salesforce: Make salesforce api call for Content
+    note right of GetNoteRequestWrapper: Request: GET {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
 
     break If any error from salesforce
-        salesforce-->>wrapper: Error
-        wrapper->>exceptionHandler: Throws exeption
+        salesforce-->>GetNoteRequestWrapper: Error
+        GetNoteRequestWrapper->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui: Return error response
     end
 
-    salesforce-->>wrapper: Response
-    wrapper-->>crm: Response
+    salesforce-->>GetNoteRequestWrapper: Response
+    GetNoteRequestWrapper-->>crm: Response
 
     note over crm: Set Response as noteContentResponse
 
-    crm->>formatter: Format Response into GetNoteDetailsFormatterDto<br>Params: noteDetailsResponse, noteContentResponse
-    break If any error occur in formatter
-        formatter->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui: Return error response
-    end
-    formatter-->>crm: GetNoteDetailsFormatterDto Response
-    crm-->>factory: Response
-    factory-->>service: Response
-    service-->> controller: Response
-    controller-->>api: Response
+    note over crm: Format Salesforce Responses<br>(noteDetailsResponse,noteContentResponse)<br> into GetNoteDetailsFormatterDto
+
+    crm-->>factory: Response:<br>GetNoteDetailsFormatterDto 
+    factory-->>service: Response:<br>GetNoteDetailsFormatterDto 
+    service-->> controller: Response:<br>GetNoteDetailsFormatterDto 
+    controller-->>api: Response:<br>GetNoteDetailsFormatterDto 
     note right of api: {note_details: {}}
 
     api-->>ui: Success:200
