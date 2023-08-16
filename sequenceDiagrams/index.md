@@ -3,14 +3,21 @@
 Welcome to the Sequence Diagrams Documentation for SalesSparrow API.
 Here you will find all the sequence diagrams for the API endpoints.
 
-- [Salesforce Connect](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/Auth/SalesforceConnect.mermaid)
+- Auth
+   - [Salesforce Connect](./Auth/SalesforceConnect.mermaid)
+   - [Redirect Url](./Auth/RedirectUrl.mermaid)
+   - [Logout](./Auth/Logout.mermaid)
+- Accounts
+   - [Get Accounts](./Accounts/GetAccounts.mermaid)
+   - [Create Note](./Accounts/CreateNote.mermaid)
+   - [Get Notes List](./Accounts/GetNotesList.mermaid)
+   - [Get Note By Id](./Accounts/GetNoteById.mermaid)
 
-- [Get Accounts](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/GetAccounts.mermaid)
+- User
+   - [Get Current User](./User/GetCurrentUser.mermaid)
 
-- [Create New Note](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/CreateNewNote.mermaid)
+- Common
+   - [OAuth Request Helper](./Common/OAuthRequestHelper.mermaid)
+   - [User Auth Interceptor](./Common/UserAuthIntercepter.mermaid)
 
-- [Get Notes List](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/GetNotesList.mermaid)
-
-- [Get Note Details](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/GetNoteDetails.mermaid)
-
-- [Salesforce OAuth Api Flow](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/SalesforceOAuthApiFlow.mermaid)
+- [Salesforce OAuth Api Flow](./SalesforceOAuthApiFlow.mermaid)

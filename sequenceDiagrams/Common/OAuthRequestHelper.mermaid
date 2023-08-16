@@ -3,10 +3,10 @@ sequenceDiagram
     participant helper as Any Salesforce Wrapper
     participant exceptionHandler as Global Exception Handler
     participant requestHelper as OAuthRequestHelper
-    participant accessToken as AccessTokenHelper   
-    participant salesforceWrapper as GetRefreshedAccessToken (Wrapper)
-    participant kms as AWS Kms
     participant dynamoDb as AWS DynamoDb
+    participant accessToken as AccessTokenHelper   
+    participant salesforceWrapper as Refresh AccessToken(Wrapper)
+    participant kms as AWS Kms
     participant salesforce as Salesforce
 
     note over helper: Make request body for Salesforce request
