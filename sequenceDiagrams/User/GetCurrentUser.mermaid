@@ -1,16 +1,26 @@
 sequenceDiagram
-  title Get Current User API
-    participant ui as SalesSparrow App
+  title Get Current User
+    participant ui as SalesSparrow Client
     participant api as SalesSparrow API
+    participant controller as User Controller
+    participant service as GetCurrentUser Service
 
     ui->>api:  Send request 
-    note right of ui: Request: <br>GET {api_base_url}/api/v1/users/current
+    note right of ui: Request: GET {api_base_url}/v1/users/current
 
-    note over api: Validate and fetch user data from cookie
-    alt If user not found
-        api-->>ui: Error Response<br>User Not Found
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/UserAuthIntercepter.mermaid'
+    break If current_user not found
+        api-->>ui: Error Response<br>current_user Not Found
     end
-    note over api: Set the current user
 
-    api-->>ui: Response
-    note right of ui: Response body: <br>current_user
+    api->>controller: 
+    
+    controller->>service: Call getCurrentUser method of GetCurrentUserService<br> params: request
+    note over service: Set the current_user using current_user from request<br>which was set by interceptor 
+
+    service-->> controller: Response
+    controller-->>api: Response
+    note right of api: {current_user:{}}
+
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> {current_user:{}}<br><br>Response headers:<br> cookie 

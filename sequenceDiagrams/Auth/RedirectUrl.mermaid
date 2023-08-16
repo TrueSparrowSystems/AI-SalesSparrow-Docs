@@ -1,15 +1,37 @@
 sequenceDiagram
   title Get Redirect Url
-    participant ui as SalesSparrow App
+    participant ui as SalesSparrow Client
     participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Auth controller
+    participant service as RedirectUrl Service
+    
     ui->>api:  Send request 
-    note right of ui: Request: GET {api_base_url}/v1/auth/salesforce/redirect-url<br><br>Query params: <br>redirect_uri [mandatory] <br>state [optional] 
+    note right of ui: Request: POST {api_base_url}/v1/auth/salesforce/redirect-url<br><br>Query params: <br>redirect_uri [mandatory] <br>state [optional] 
 
-    note over api: Validate and sanitize the query params
-    alt If mandatory params not present in the body
-        api-->>ui: Mandatory param missing error
+    api->>validator: Validate query params
+    
+
+    break If mandatory params not present in the body
+        validator->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return error response 
     end
 
-    note over api: Construct the redirect Url using query params and 
-    api-->>ui: Response 
-    note right of ui: Response body: <br>url
+    note over validator: Validate the redirect_uri amongst whitelisted redirect_uri's
+    break If not valid URI
+        validator->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    validator->>controller: Send validated params <br> params: redirect_uri, state
+
+    controller->>service: Call getSalesforceOauthUrl method of RedirectUrlService<br> params: redirect_uri, state
+    note over service: Construct the redirect url using salesforce oauth2 url, clientId, redirect_uri and state. 
+
+    service-->> controller: Response
+    controller-->>api: Response
+    note right of api: {url: ""}
+
+    api-->>ui: Success:200
+    note right of ui: Response body:<br> {url:""}<br>
