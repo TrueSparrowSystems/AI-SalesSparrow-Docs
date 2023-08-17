@@ -29,10 +29,13 @@ components:
             properties:
               parameter:
                 type: string
-              message:
+              param_error_identifier:
                 type: string
+              message:
+                type: string  
             example:
               parameter: "text"
+              param_error_identifier: "missing_text"
               message: "text is a required parameter. Please provide text."
     response_401:
       type: object
@@ -162,6 +165,24 @@ paths:
           schema:
             type: string
       responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_500'
         '200':
           description: Success
           content:
@@ -211,6 +232,24 @@ paths:
           schema:
             type: string
       responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_500'
         '200':
           description: Success
           content:
