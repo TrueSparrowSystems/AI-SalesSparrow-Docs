@@ -5,6 +5,68 @@ info:
   version: '1.0'
 servers:
   - url: https://sales.truesparrow.com/api
+components:
+  schemas:   
+    response_401:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 401
+        message: 
+          type: string
+          example: "Unauthorized API request. Please check your API key."
+        code:
+          type: string
+          example: "UNAUTHORIZED"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
+    response_404:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 404
+        message: 
+          type: string
+          example: "Resource not found. Please check if the resource identifier passed in the URL is valid and try again."
+        code:
+          type: string
+          example: "NOT_FOUND"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
+    response_500:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 500
+        message: 
+          type: string
+          example: "Something went wrong."
+        code:
+          type: string
+          example: "INTERNAL_SERVER_ERROR"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
 paths:                    
   /v1/auth/logout:
     post:
@@ -17,3 +79,21 @@ paths:
               schema:
                 type: object
                 example: {}
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_500'
