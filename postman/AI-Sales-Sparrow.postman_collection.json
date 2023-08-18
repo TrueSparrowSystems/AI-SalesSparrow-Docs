@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "7a7d3f32-7645-432d-bb04-0ce4d1a82beb",
+		"_postman_id": "5c778d33-7f34-44d2-bb6f-faf351054b25",
 		"name": "AI-Sales-Sparrow",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21195162"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -183,6 +182,36 @@
 						"body": {
 							"mode": "raw",
 							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/notes",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"notes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Note",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Sample Note\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
