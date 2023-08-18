@@ -11,11 +11,11 @@ sequenceDiagram
     alt Clicks logout
         UADS->>USVM: call logOut method
         USVM->>AS: invoke post method
-        AS->> S: Request: logout user
+        AS-->> S: Request: logout user
         note right of AS: POST {api_base_url}/v1/auth/logout
 
         S-->>AS: Response
-        AS-->>USVM: 
+        AS->>USVM: 
         note over USVM: reset user login cookie
 
         USVM->>LS: Navigate to LoginScreen

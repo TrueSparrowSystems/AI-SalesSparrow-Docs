@@ -8,10 +8,10 @@ sequenceDiagram
     participant AS as ApiService
     participant S as Server
 
-    CS-->>ASS: Select or Search Account
+    CS->>ASS: Select or Search Account
     ASS->>ASVM: call searchAccounts method with searchText
     ASVM->>AS: invoke get method
-    AS->>S: Send request
+    AS-->>S: Send request
     note right of AS: GET {api_base_url}/v1/accounts?q=""
 
     break If request fails
@@ -27,6 +27,6 @@ sequenceDiagram
     
     alt User selects on Account name
         ASS->>CS: Callback to Caller screen with selected account details
-    else User selects view note
-        ASS->>CS: Callback to CreateNoteScreen 
+    else User selects add note
+        ASS->>CS: Navigate to CreateNoteScreen
     end
