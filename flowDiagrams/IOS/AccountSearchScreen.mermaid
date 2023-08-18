@@ -24,7 +24,9 @@ sequenceDiagram
     S-->>AS: Success response
     AS->>ASVM: response
     ASVM->>ASS: Displays list of account
-
-    note over ASS: User selects account
     
-    ASS->>CS: Callback to Caller screen with selected account
+    alt User selects on Account name
+        ASS->>CS: Callback to Caller screen with selected account details
+    else User selects view note
+        ASS->>CS: Callback to CreateNoteScreen 
+    end
