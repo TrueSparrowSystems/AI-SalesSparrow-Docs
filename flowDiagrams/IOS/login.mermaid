@@ -1,0 +1,68 @@
+sequenceDiagram
+    title Salesforce Login Flow
+
+    participant U as User
+    participant SSA as SalesSparrowApp
+    participant AD as AppDelegate
+    participant LS as LoginScreen
+    participant HS as HomeScreen
+    participant USVM as UserStateViewModel
+    participant LSVM as LoginScreenViewModel
+    participant AS as ApiService
+    participant S as Server
+    participant B as Browser
+    participant SF as Salesforce
+
+    U->>SSA: Initiates App launch
+    SSA->>AD: Commences Firebase Crashlytics
+    SSA->>USVM: call getCurrentUser method
+    USVM->>SSA: current user entity
+
+    alt if current user is valid
+        SSA->>HS: Navigate to Homescreen
+    else
+
+    SSA->>LS: Navigate to Login Screen
+
+    alt clicks "Continue with Salesforce"
+    LS->>LSVM: call fetchSalesforceConnectUrl method
+    LSVM->>AS: call get method in ApiServiceClass with redirect_uri
+    AS->>S: Request: Salesforce login URL
+    note right of AS: Request: POST {api_base_url}/v1/auth/salesforce/redirect-url
+
+    break If request fails
+        S->>AS: Error
+        AS->>LSVM: Error message
+        LSVM->>LS: Displays Error message
+    end
+
+    S-->>AS: Success Response 
+    AS->>LSVM: Response with Login URL
+
+    LS->>B: Open Browser with Login URL
+    B->>SF: Login with Salesforce credentials
+    SF-->>B: Auth code
+    note right of B: (code:"")
+    
+    B->>LS: Redirect to App with Auth Code
+
+    LS->>LSVM: call salesforceConnect method with authcode
+    LSVM->>AS: invoke post method
+    AS->>S: Request: Salesforce connect
+    note right of AS: Request: POST {api_base_url}/v1/auth/salesforce/connect
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>LSVM: Error message
+        LSVM->>LS: Displays Error message
+    end
+
+    S->>SSA: 
+    Note over SSA: set user login cookie
+    S-->>AS: Success response
+    AS->>LSVM: Response with user data
+    LSVM->>USVM: call setLoggedInUser method with received user data
+    note over USVM: Set current user entity
+    USVM->>HS: Navigate to Homescreen
+    end
+    end
