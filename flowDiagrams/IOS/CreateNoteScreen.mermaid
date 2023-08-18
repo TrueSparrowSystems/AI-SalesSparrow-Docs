@@ -1,7 +1,6 @@
 sequenceDiagram
     title Create Note
 
-    participant HS as HomeScreen
     participant CNS as CreateNoteScreen
     participant SAS as SearchAccountScreen
     participant TVM as ToastViewModel
@@ -9,13 +8,9 @@ sequenceDiagram
     participant AS as ApiService
     participant S as Server
 
-    alt Create Note from Home Screen
-        HS->>CNS: Navigate to note screen
-
-       alt  Account is not selected
-            CNS->>SAS: Search account flow
-            SAS->>CNS: Return selected account
-        end
+    alt  Account is not selected
+        CNS->>SAS: Search account flow
+        SAS->>CNS: Return selected account
     end
 
     note over CNS: User enters note
