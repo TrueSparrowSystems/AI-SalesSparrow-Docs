@@ -33,11 +33,13 @@ sequenceDiagram
     break If request fails
         S->>AS: Error
         AS->>LSVM: Error message
-        LSVM->>LS: Displays Error message
+        LSVM->>LS: Return error message
+        note over LS: Show Error feedback to user
     end
 
     S-->>AS: Success Response 
     AS->>LSVM: Response with Login URL
+    LSVM->>LS: Propagate Login URL
 
     LS->>B: Open Browser with Login URL
     B->>SF: Login with Salesforce credentials
