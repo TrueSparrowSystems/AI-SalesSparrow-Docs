@@ -1,16 +1,12 @@
 sequenceDiagram
     title Create Note
 
-    participant HS as HomeScreen
     participant NS as NoteScreen
     participant SAS as SearchAccountScreen
     participant CT as CustomToast
     participant NVM as NotesViewModel
     participant NR as NotesRepository
     participant S as Server
-
-    alt Create Note from Home Screen
-        HS->>NS: Naviagte to note screen
 
        alt  Account is not selected
             NS->>SAS: Search account flow
@@ -19,7 +15,7 @@ sequenceDiagram
 
         NS->>NVM : clicks on Save note
         NVM->>NR: Invoke Save note method with account_id and note_text
-        NR->>S : Request: Save note
+        NR-->>S : Request: Save note
         note right of NR: POST {api_base_url}/{account_id}/notes
 
     break If request fails
@@ -32,6 +28,3 @@ sequenceDiagram
     NR->>NVM: response
     NVM->>CT: Displays success toast message
     NVM->>NS: Displays created note
-
-    end
-
