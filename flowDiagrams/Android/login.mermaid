@@ -26,11 +26,11 @@ sequenceDiagram
     alt clicks "Continue with Salesforce"
     LS->>AVM: call getConnectWithSalesForceUrl method
     AVM->>AR: call get method in ApiService with redirect_uri
-    AR->>S: Request: Salesforce login URL
+    AR-->>S: Request: Salesforce login URL
     note right of AR: Request: POST {api_base_url}/v1/auth/salesforce/redirect-url
 
     break If request fails
-        S->>AR: Error
+        S-->>AR: Error
         AR->>AVM: Error message
         AVM->>LS: Displays Error message
     end
@@ -38,16 +38,16 @@ sequenceDiagram
     S-->>AR: Success Response 
     AR->>AVM: Response with Login URL
 
-    LS->>B: Open Browser with Login URL
-    B->>SF: Login with Salesforce credentials
+    LS-->>B: Open Browser with Login URL
+    B-->>SF: Login with Salesforce credentials
     SF-->>B: Auth code
     note right of B: (code:"")
     
-    B->>LS: Redirect to App with Auth Code
+    B-->>LS: Redirect to App with Auth Code
 
     LS->>AVM: call salesForceConnect method with authcode
     AVM->>AR: invoke post method
-    AR->>S: Request: Salesforce connect
+    AR-->>S: Request: Salesforce connect
     note right of AR: Request: POST {api_base_url}/v1/auth/salesforce/connect
 
     break If request fails
@@ -56,7 +56,7 @@ sequenceDiagram
         AVM->>LS: Displays Error message
     end
 
-    S->>SSA: 
+    S-->>SSA: 
     Note over SSA: set user login cookie
     S-->>AR: Success response
     AR->>AVM: Response with user data

@@ -11,7 +11,7 @@ sequenceDiagram
     alt Clicks logout
         SC->>AVM: call logOut method
         AVM->>AR: invoke post method
-        AR->> S: Request: logout user
+        AR-->> S: Request: logout user
         note right of AR: POST {api_base_url}/v1/auth/logout
 
         S-->>AR: Response
