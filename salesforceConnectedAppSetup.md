@@ -22,9 +22,13 @@ A connected app in Salesforce allows external applications to integrate securely
    - Check the "Enable for Device Flow" checkbox.
 
 4. **Configure OAuth Settings:**
-   - In the "Callback URL" field, provide the URL where Salesforce will redirect after authentication (e.g., `https://yourapp.com/oauth/callback`).
+   - In the "Callback URL" field, provide the URL where Salesforce will redirect after authentication.
+      - **Whitelisted Callback URLs For SalesSparrow:** `salessparrowdev://oauth/success` and `salessparrow://oauth/success`.
    - In the "Selected OAuth Scopes" section, choose the required scopes based on your integration needs.
-   - Select the appropriate access level (e.g., "Full access" or "Refresh token").
+      - **Scopes for SalesSparrow:**
+         - Manage user data via APIs (api)
+         - Perform requests at any time (refresh_token, offline_access)
+         - Access unique user identifiers (openid)
    - Check the "Require Secret for Web Server Flow" checkbox.
    - Check the "Require Secret for Refresh Token Flow" checkbox.
 
