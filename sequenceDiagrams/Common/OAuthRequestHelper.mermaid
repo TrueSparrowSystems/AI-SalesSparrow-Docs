@@ -1,0 +1,113 @@
+sequenceDiagram
+  title OAuth Request Helper
+    participant helper as Any Salesforce Wrapper
+    participant exceptionHandler as Global Exception Handler
+    participant requestHelper as OAuthRequestHelper
+    participant dynamoDb as AWS DynamoDb
+    participant accessToken as AccessTokenHelper   
+    participant salesforceWrapper as Refresh AccessToken(Wrapper)
+    participant kms as AWS Kms
+    participant salesforce as Salesforce
+
+    note over helper: Make request body for Salesforce request
+
+    note over helper: Make HTTP request function<br> with accessToken and InstanceUrl parameter<br>Request:  <br>InstanceUrl, RequestBody, header and timeout
+
+    helper->>requestHelper: call makeRequest of salesforceOauthRequest<br> params: salesforceUserId, request
+
+    requestHelper->>dynamoDb: Get SalesforceOauthToken using salesforceUserId 
+    break If any error from dynamoDb
+        dynamoDb -->> requestHelper: Error
+        requestHelper ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>helper: Return error response
+    end  
+
+    dynamoDb-->>requestHelper: Response
+
+    note over requestHelper: Get SalesforceOauthToken from salesforce_oauth_tokens
+
+    requestHelper->>accessToken: call decryptAccessToken method of SalesforceOAuthAccessToken<br> params: SalesforceOauthToken
+
+    accessToken ->> kms: Decrypt access token 
+    break If any error encrypting access token
+        kms -->> accessToken: Error
+        accessToken ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>helper: Return error response
+    end
+    kms -->> accessToken: Response: decryptedAccessToken
+
+    accessToken-->>requestHelper: Response: decryptedAccessToken
+
+    requestHelper->>salesforce: Execute request with decryptedAccessToken
+
+    alt
+        salesforce-->>requestHelper: Response 401 
+        note over requestHelper: SalesforceOAuthRequest helper will fetch new tokens <br>using refresh token and execute request again with updated Access token 
+        
+        requestHelper->>accessToken: call updateAndGetRefreshedAccessToken method of SalesforceOAuthAccessToken<br> params: SalesforceOauthToken
+
+        note over accessToken: Get RefreshToken from SalesforceOauthToken
+
+        accessToken ->> kms: Decrypt Refresh token 
+        break If any error decrypting refresh token
+            kms -->> accessToken: Error
+            accessToken ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>helper: Return error response
+        end
+        kms -->> accessToken: Response: decryptedRefreshToken
+
+        accessToken->>salesforceWrapper: Call salesforce oauth token API <br> Params: decryptedRefreshToken
+
+        note over salesforceWrapper: Hit the post request using http client
+        salesforceWrapper ->> salesforce: Send Request to get Access token using refresh token
+        note right of salesforceWrapper: POST {salesforce_base_url}/services/oauth2/token<br><br>Body params: <br>grant_type [mandatory] <br>client_id [mandatory]<br>client_secret [mandatory] <br>refresh_token [mandatory] 
+        break If any other error from salesforce server
+            salesforce -->> salesforceWrapper: Error
+            salesforceWrapper ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>helper: Return error response
+        end
+
+        salesforce-->>accessToken: Response
+
+        note over accessToken: Get AccessToken from Response
+
+        accessToken ->> kms: Encrypt AccessToken
+        break If any error encrypting Access token
+            kms -->> accessToken: Error
+            accessToken ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>helper: Return error response
+        end
+        kms -->> accessToken: Response: encryptedAccessToken
+
+        accessToken->>dynamoDb: Save encryptedAccessToken in SalesforceOauthToken
+        break If any error from dynamoDb
+            dynamoDb -->> accessToken: Error
+            accessToken ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>helper: Return error response
+        end  
+
+        dynamoDb-->>accessToken: Response
+
+        accessToken-->>requestHelper: decryptedAccessToken
+
+        requestHelper->>salesforce: Execute request with decryptedAccessToken
+
+        break If any error from salesforce server
+            salesforce -->> requestHelper: Error
+            requestHelper ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>helper: Return error response
+        end
+
+        salesforce -->> requestHelper: Response
+    end 
+
+    break If any other error from salesforce server
+        salesforce -->> requestHelper: Error
+        requestHelper ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>helper: Return error response
+    end
+
+    salesforce -->> requestHelper: Response
+
+    requestHelper-->>helper: Response
+

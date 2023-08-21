@@ -1,0 +1,23 @@
+sequenceDiagram
+    title Setting Screen
+
+
+    participant LS as LoginScreen
+    participant SC as SettingsScreen
+    participant AVM as AuthenticationViewModal
+    participant AR as AuthenticationRepository
+    participant S as Server
+
+    alt Clicks logout
+        SC->>AVM: call logOut method
+        AVM->>AR: invoke post method
+        AR-->> S: Request: logout user
+        note right of AR: POST {api_base_url}/v1/auth/logout
+
+        S-->>AR: Response
+        AR-->>AVM: 
+        note over AVM: reset user login cookie
+
+        AVM->>LS: Navigate to LoginScreen
+
+    end

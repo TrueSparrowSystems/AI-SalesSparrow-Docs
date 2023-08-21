@@ -1,0 +1,32 @@
+sequenceDiagram
+    title Account Select and Search Flow
+
+    participant CS as Home/CreateNote Screen
+    participant ASS as AccountSearchScreen
+    participant TVM as ToastViewModel
+    participant ASVM as AccountSearchViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    CS->>ASS: Select or Search Account
+    ASS->>ASVM: call searchAccounts method with searchText
+    ASVM->>AS: invoke get method
+    AS-->>S: Send request
+    note right of AS: GET {api_base_url}/v1/accounts?q=""
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>ASVM: response
+        ASVM->>TVM: error message
+        TVM->>CS: error message is displayed
+    end
+    
+    S-->>AS: Success response
+    AS->>ASVM: response
+    ASVM->>ASS: Displays list of account
+    
+    alt User selects on Account name
+        ASS->>CS: Callback to Caller screen with selected account details
+    else User selects add note
+        ASS->>CS: Navigate to CreateNoteScreen
+    end

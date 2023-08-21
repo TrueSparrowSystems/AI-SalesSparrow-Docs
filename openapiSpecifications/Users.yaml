@@ -1,0 +1,168 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Users API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+
+components:
+  schemas:
+  
+    current_user: 
+      type: object
+      properties:
+        id: 
+          type: string
+          example: "0caa56f9-2abd-45b2-8469-e41d3e692eaa"
+        name:
+          type: string
+          example: 'sample user'
+        email:
+          type: string
+          example: 'sampleuser@gmail.com'
+          
+    param_errors: 
+      type: object
+      properties: 
+        parameter: 
+          type: string
+          example: "redirect_uri"
+        param_error_identifier:
+          type: string
+          example: "invalid_redirect_uri"
+        message: 
+          type: string
+          example: "Invalid redirect URI. Please double check and try again."
+
+    response_400:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 400
+        message: 
+          type: string
+          example: "At least one parameter is invalid or missing."
+        code:
+          type: string
+          example: "INVALID_PARAMS"
+        internal_error_identifier:
+          type: string
+          example: "b_2"
+        param_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/param_errors'
+  
+    response_401:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 401
+        message: 
+          type: string
+          example: "Unauthorized API request. Please check your API key."
+        code:
+          type: string
+          example: "UNAUTHORIZED"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
+           
+    response_404:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 404
+        message: 
+          type: string
+          example: "Resource not found. Please check if the resource identifier passed in the URL is valid and try again."
+        code:
+          type: string
+          example: "NOT_FOUND"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
+           
+    response_500:
+      type: object
+      properties:
+        http_code:
+          type: string
+          example: 500
+        message: 
+          type: string
+          example: "Something went wrong."
+        code:
+          type: string
+          example: "INTERNAL_SERVER_ERROR"
+        internal_error_identifier:
+          type: string
+          example: "a_b_c_1"
+        param_errors:
+          type: array
+          items:
+            type: string
+          example: []
+
+paths:
+  /v1/users/current:
+    get:
+      description: Api will return current user entity
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_user:
+                    type: object
+                    properties:
+                      id: 
+                        type: string
+                        example: "0caa56f9-2abd-45b2-8469-e41d3e692eaa"
+                      name:
+                        type: string
+                        example: 'sample user'
+                      email:
+                        type: string
+                        example: 'sampleuser@gmail.com'
+        '400':
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_500'

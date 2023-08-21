@@ -1,0 +1,32 @@
+sequenceDiagram
+    title Account Select and Search Flow
+
+    participant CNS as CreateNoteScreen
+    participant ASS as AccountSearchScreen
+    participant CT as CustomToast
+    participant ASVM as AccountSearchViewModel
+    participant ASR as AccountSearchRepository
+    participant S as Server
+
+    CNS-->>ASS: Select or Search Account
+    ASS->>ASVM: call searchAccounts method with searchText
+    ASVM->>ASR: invoke get method
+    ASR-->>S: Send request
+    note right of ASR: GET {api_base_url}/v1/accounts?q=""
+
+    break If request fails
+        S-->>ASR: Error response
+        ASR->>ASVM: response
+        ASVM->>CT: error message
+        CT->>CNS: error message is displayed
+    end
+    
+    S-->>ASR: Success response
+    ASR->>ASVM: response
+    ASVM->>ASS: Displays list of account
+    
+  alt User selects on Account name
+        ASS->>CNS: Callback to Caller screen with selected account details
+    else User selects add note
+        ASS->>CNS: Navigate to CreateNoteScreen
+    end

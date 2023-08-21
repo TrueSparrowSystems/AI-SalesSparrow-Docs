@@ -1,0 +1,49 @@
+Table salesforce_organizations {
+  external_organization_id varchar pk
+  status salesforce_organizations_status
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table salesforce_oauth_tokens {
+  external_user_id varchar pk
+  identity_url varchar 
+  access_token varchar
+  refresh_token varchar
+  signature varchar
+  id_token varchar
+  instance_url varchar
+  status salesforce_oauth_tokens_status
+  issued_at bigint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table salesforce_users {
+  external_user_id varchar pk
+  identity_url varchar 
+  external_organization_id varchar 
+  name varchar
+  email varchar 
+  user_kind varchar
+  cookie_token varchar 
+  encryption_salt varchar 
+  status salesforce_users_status 
+  created_at timestamp 
+  updated_at timestamp 
+}
+
+Enum salesforce_organizations_status {
+ACTIVE
+DELETED
+}
+
+Enum salesforce_oauth_tokens_status {
+ACTIVE
+DELETED
+}
+
+Enum salesforce_users_status {
+ACTIVE
+DELETED
+}

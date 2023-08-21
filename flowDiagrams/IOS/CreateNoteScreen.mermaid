@@ -1,0 +1,35 @@
+sequenceDiagram
+    title Create Note
+
+    participant CNS as CreateNoteScreen
+    participant SAS as SearchAccountScreen
+    participant TVM as ToastViewModel
+    participant CNVM as CreateNoteViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    alt  Account is not selected
+        CNS->>SAS: Search account flow
+        SAS->>CNS: Return selected account
+    end
+
+    note over CNS: User enters note
+
+    CNS->>CNVM : Clicks on Save note
+    CNVM->>AS: Invoke Save note method with account_id and note_text
+    AS-->>S : Request: Save note
+    note right of AS: POST {api_base_url}/{account_id}/notes
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>CNVM: Response
+        CNVM->>TVM: error message
+        TVM->>CNS: Displays error toast message
+    end
+    
+    S-->>AS: Success response
+    AS->>CNVM: Response
+    CNVM->>TVM: Response message
+    TVM->>CNS: Displays note created successfully message
+    CNVM->>CNS: Response
+    note over CNS: Display created note

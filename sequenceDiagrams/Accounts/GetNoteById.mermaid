@@ -1,0 +1,86 @@
+sequenceDiagram
+  title Get Note by Id
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Controller
+    participant service as GetNoteDetails Service
+    participant factory as GetNoteDetails Factory
+    participant crm as Salesforce GetNoteDetails Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant GetNoteRequestWrapper as  GetNoteRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: <br>GET {api_base_url}/accounts/{account_id}/notes/{note_id}<br><br>path params:  <br>note_id (NoteId to fecth details of note)<br>account_id 
+
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If current_user not found
+        api-->>ui: Error Response<br>current_user Not Found
+    end
+
+    api->>validator: Validate path params
+
+    break If mandatory params not present in the body
+        validator->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return error response 
+    end
+
+    validator->>controller: Send validated params<br>params: noteId
+    
+    controller->>service: Call getNoteDetails method of GetNoteDetailsService<br> params: request, noteId
+    note over service: GetAttribute of current_user from request<br>Which was set by interceptor
+
+    service->>factory: Call getNoteDetails method of GetNoteDetailsFactory<br>params: current_user, noteId
+    note over factory: Based on current_user identify CRM
+
+    factory->>crm: Call getNoteDetails method of particular CRM service<br>params: current_user, noteId
+
+    note over crm: fetch salesforceUserId from request current_user
+    break If salesforceUserId is not present in current_user.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return error response 
+    end
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Title, TextPreview, ContentModifiedDate , CreatedBy.Name FROM ContentNote <br>WHERE Id = note_id<br>referenceId: "GetContentNotes"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+
+    note over crm: Set Response as noteDetailsResponse 
+
+    crm->>GetNoteRequestWrapper: Call MakeRequest of GetNoteRequestWrapper<br> params: method, Url
+
+    GetNoteRequestWrapper->>salesforce: Make salesforce api call for Content
+    note right of GetNoteRequestWrapper: Request: GET {instance_url}/services/data/v58.0/sobjects/ContentNote/{{note_id}} 
+
+    break If any error from salesforce
+        salesforce-->>GetNoteRequestWrapper: Error
+        GetNoteRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return error response
+    end
+
+    salesforce-->>GetNoteRequestWrapper: Response
+    GetNoteRequestWrapper-->>crm: Response
+
+    note over crm: Set Response as noteContentResponse
+
+    note over crm: Format Salesforce Responses<br>(noteDetailsResponse,noteContentResponse)<br> into GetNoteDetailsFormatterDto
+
+    crm-->>factory: Response:<br>GetNoteDetailsFormatterDto 
+    factory-->>service: Response:<br>GetNoteDetailsFormatterDto 
+    service-->> controller: Response:<br>GetNoteDetailsFormatterDto 
+    controller-->>api: Response:<br>GetNoteDetailsFormatterDto 
+    note right of api: {note_details: {}}
+
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> note_details<br><br>Response headers:<br> cookie 

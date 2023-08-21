@@ -1,0 +1,24 @@
+sequenceDiagram
+    title User Account Detail Screen
+
+
+    participant LS as LoginScreen
+    participant UADS as UserAccountDetailScreen
+    participant USVM as UserStateViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    alt Clicks logout
+        UADS->>USVM: call logOut method
+        USVM->>AS: invoke post method
+        AS-->> S: Request: logout user
+        note right of AS: POST {api_base_url}/v1/auth/logout
+
+        S-->>AS: Response
+        AS->>USVM: 
+        note over USVM: reset user login cookie
+
+        USVM->>LS: Navigate to LoginScreen
+
+    end
+

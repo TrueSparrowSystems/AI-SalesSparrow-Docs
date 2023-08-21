@@ -1,0 +1,154 @@
+sequenceDiagram
+  title Salesforce connect 
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Auth Controller
+    participant service as Auth Service
+    participant tokensWrapper as Salesforce Get Tokens Wrapper
+    participant identityWrapper as Salesforce Get Identity Wrapper
+    participant salesforce as Salesforce
+    participant dynamoDb as AWS DynamoDb
+    participant kms as AWS KMS
+
+    ui->>api: Send request 
+    note right of ui: Request: POST {api_base_url}/v1/auth/salesforce/connect<br><br>Body params: <br>code [mandatory] <br>redirect_uri [mandatory] 
+
+    api->>validator: Validate request parameters 
+
+    note over validator: Validate mandatory parameters
+
+    break If mandatory parameters not present
+        validator->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    note over validator: Validate the redirect_uri amongst whitelisted redirect_uri's
+
+    break If not valid URI
+        validator->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    validator->>controller: Send validated params <br> Params: code, redirectUri
+
+    controller->>service: Call connectToSalesforce method of auth service <br> Params: code, redirectUri
+
+    service->>tokensWrapper: Call the getTokens method of salesforce get tokens wrapper <br> Params: code, redirectUri
+
+    note over tokensWrapper: Hit the salesforce oauth token API using http client.
+    tokensWrapper->>salesforce: Send request
+    note right of tokensWrapper: POST {salesforce_base_url}/services/oauth2/token<br><br>Body params: <br>grant_type [mandatory] <br>client_id [mandatory]<br>client_secret [mandatory] <br>code [mandatory] <br> redirect_uri [mandatory]
+
+    break If any error from salesforce server
+        salesforce -->> tokensWrapper: Error
+        tokensWrapper ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    salesforce -->> tokensWrapper: Response
+    tokensWrapper -->> service: Response
+
+    note over service: Assign the response to tokensData
+
+    note over service: Call the validateAndUpsertSalesforceOrganization method.
+
+    service->>dynamoDb: Get get salesforce organization by external organization id from tokensData.
+    break If any error from dynamoDb
+        dynamoDb -->> service: Error
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end   
+    dynamoDb -->> service: Response
+
+    break If not active organization
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    service->>dynamoDb: Upsert salesforce organization data in salesforce_organizations.
+    break If any error from dynamoDb
+        dynamoDb -->> service: Error
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end   
+    dynamoDb -->> service: Response
+    
+    note over service: Upsert salesforce oAuth tokens in salesforce_oauth_tokens.
+
+    service ->> kms: Encrypt access token 
+    break If any error encrypting access token
+        kms -->> service: Error
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+    kms -->> service: Response: Encrypted access token
+
+    service ->> kms: Encrypt refresh token 
+    break If any error encrypting refresh token
+        kms -->> service: Error
+        service ->> exceptionHandler: Throws exception
+        exceptionHandler-->>ui: Return error response
+    end
+    kms -->> service: Response: Encrypted refresh token
+
+    note over service: Create salesforceOauthToken object using tokensData
+
+    service ->> dynamoDb: Get salesforce user using salesforceUserId from tokensData
+    break If any error from dynamoDb
+        dynamoDb -->> service: Error
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end   
+    dynamoDb -->> service: Response
+
+    alt If existing user
+        note over service: Update the salesforceUser object, set isNewUser variable to false and get the decryptedSalt from salesforceUser
+    end
+
+    service ->> dynamoDb: Upsert salesforceOauthToken in salesforce_oauth_tokens table.
+    break If any error from dynamoDb
+        dynamoDb -->> service: Error
+        service ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+    dynamoDb -->> service: Response
+
+    alt If new user (Trigger signup flow)
+
+        service->>identityWrapper: Call the getUserIdentity method of salesforce get identity wrapper <br> Params: instanceUrl, accessToken
+
+        identityWrapper->>salesforce: Send request
+        note right of identityWrapper: GET {instance_url}/services/oauth2/userinfo<br><br>access_token [request header] [mandatory] 
+
+        break If any error from salesforce server
+            salesforce -->> identityWrapper: Error
+            identityWrapper ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>ui: Return error response
+        end
+
+        salesforce -->> identityWrapper: Response
+        identityWrapper -->> service: Response
+
+        note over service: Store user info in userData
+
+        note over service: Call createSalesforceUser method.
+
+        note over service: Create salesforceUser object using userData
+
+        service->>dynamoDb: Create salesforceUser in salesforce_users table
+
+        break If any error from dynamoDb
+            dynamoDb -->> service: Error
+            service ->> exceptionHandler: Throws exception 
+            exceptionHandler-->>ui: Return error response
+        end
+        dynamoDb -->> service: Response       
+    end
+
+    note over service: Prepare current_user entity and currentUserLoginCookie 
+    service-->>controller: Response 
+    controller-->>api: Response
+    api-->>ui: Success 200
+    note right of ui: Response body: <br>current_user<br><br>Response headers:<br> cookie 

@@ -1,0 +1,60 @@
+sequenceDiagram
+  title User Auth Interceptor
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception exceptionHandler
+    participant interceptor as UserAuthInterceptor
+    participant cookieauth as UserLoginCookieAuth
+    participant dynamoDb as AWS DynamoDb
+
+    ui->>api: send request
+
+    api->>interceptor: fetch current user data from cookie by interceptor
+    note right of api: Register userAuthInterceptor excluding following PathPatterns<br>"/api/v1/auth/salesforce/**"
+
+    note over interceptor: getCookieValue from incoming request
+
+    interceptor->>cookieauth: Call validateAndSetCookie method of UserLoginCookieAuth<br>param: cookieValue
+
+    note over cookieauth: Validate cookie value
+
+    break If cookie is null 
+        cookieauth->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    note over cookieauth: Read values from cookieValue <br> userId, userKind, timestamp, token
+
+    note over cookieauth: Validate Timestamp
+
+    break If cookie Timestamp is expired 
+        cookieauth->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    note over cookieauth: Fetch And Validate User:<br>by UserKind retrive user from CRM user table
+    cookieauth->>dynamoDb: Get salesforce user by salesforceUserId
+
+    break If any error from dynamoDb
+        dynamoDb -->> cookieauth: Error
+        cookieauth ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end   
+    dynamoDb -->> cookieauth: Response
+
+    note over cookieauth: validate CookieToken
+
+    break If CookieToken is invalid
+        cookieauth->>exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return error response
+    end
+
+    note over cookieauth: set Updated CookieValue
+
+    cookieauth-->>interceptor: return map of user and userLoginCookieValue
+    
+    note over interceptor: set user in request attribute
+
+    interceptor-->>api: set cookie in response.
+
+    api-->>ui: return
