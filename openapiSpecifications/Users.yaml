@@ -19,17 +19,7 @@ paths:
                 type: object
                 properties:
                   current_user:
-                    type: object
-                    properties:
-                      id: 
-                        type: string
-                        example: "0caa56f9-2abd-45b2-8469-e41d3e692eaa"
-                      name:
-                        type: string
-                        example: 'sample user'
-                      email:
-                        type: string
-                        example: 'sampleuser@gmail.com'
+                    $ref: 'Components.yaml#/components/schemas/current_user'
         '400':
           description: "Bad Request"
           content:
