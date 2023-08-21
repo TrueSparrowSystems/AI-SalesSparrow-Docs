@@ -5,11 +5,12 @@ Welcome to the documentation for SalesSparrow. This document serves as a central
 ## Table of Contents
 
 ### SalesSparrow API
-- [OpenAPI Specification](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/openapiSpecifications/index.md)
-- [Sequence Diagrams](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/sequenceDiagrams/index.md)
-- [Database Schema](#https://github.com/TrueSparrowSystems/AI-SalesSparrow-Docs/blob/master/dbSchema.dbml)
+- [OpenAPI Specification](./openapiSpecifications/index.md)
+- [Sequence Diagrams](./sequenceDiagrams/index.md)
+- [Database Schema](dbSchema.dbml)
 - [Postman Collection](./postman/AI-Sales-Sparrow.postman_collection.json)
 - [Postman Environment](./postman/AI-Sales-Sparrow-local.postman_environment.json)
+- [Salesforce Connected App Setup](salesforceConnectedAppSetup.md)
 
 ### SalesSparrow App
 
