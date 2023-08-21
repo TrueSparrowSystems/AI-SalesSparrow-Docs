@@ -5,98 +5,7 @@ info:
   version: 1.0.0
 servers:
   - url: https://sales.truesparrow.com/api
-components:
-  schemas:
-    response_400:
-      type: object
-      properties:
-        http_code:
-          type: string
-          example: "400"
-        message:
-          type: string
-          example: "At least one parameter is invalid or missing."
-        code:
-          type: string
-          example: "INVALID_PARAMS"
-        internal_error_identifier:
-          type: string
-          example: "a_b_c_1"
-        param_errors:
-          type: array
-          items:
-            type: object
-            properties:
-              parameter:
-                type: string
-              param_error_identifier:
-                type: string
-              message:
-                type: string  
-            example:
-              parameter: "text"
-              param_error_identifier: "missing_text"
-              message: "text is a required parameter. Please provide text."
-    response_401:
-      type: object
-      properties:
-        http_code:
-          type: string
-          example: "401"
-        message:
-          type: string
-          example: "Unauthorized API request. Please check your API key."
-        code:
-          type: string
-          example: "UNAUTHORIZED"
-        internal_error_identifier:
-          type: string
-          example: "a_b_c_1"
-        param_errors:
-          type: array
-          items:
-            type: string
-          example: []
-    response_404:
-      type: object
-      properties:
-        http_code:
-          type: string
-          example: "404"
-        message:
-          type: string
-          example: "Resource not found. Please check if the resource identifier passed in the URL is valid and try again."
-        code:
-          type: string
-          example: "NOT_FOUND"
-        internal_error_identifier:
-          type: string
-          example: "a_b_c_1"
-        param_errors:
-          type: array
-          items:
-            type: string
-          example: []
-    response_500:
-      type: object
-      properties:
-        http_code:
-          type: string
-          example: "500"
-        message:
-          type: string
-          example: "Something went wrong."
-        code:
-          type: string
-          example: "INTERNAL_SERVER_ERROR"
-        internal_error_identifier:
-          type: string
-          example: "a_b_c_1"
-        param_errors:
-          type: array
-          items:
-            type: string
-          example: []
+
 paths:
   /v1/accounts/{account_id}/notes:
     post:
@@ -126,25 +35,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_400'
+                $ref: 'Components.yaml#/components/schemas/response_400'
         '401':
           description: Unauthorized access
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_401'
+                $ref: 'Components.yaml#/components/schemas/response_401'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_404'
+                $ref: 'Components.yaml#/components/schemas/response_404'
         '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_500'
+                $ref: 'Components.yaml#/components/schemas/response_500'
         '200':
           description: Success
           content:
@@ -170,19 +79,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_401'
+                $ref: 'Components.yaml#/components/schemas/response_401'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_404'
+                $ref: 'Components.yaml#/components/schemas/response_404'
         '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_500'
+                $ref: 'Components.yaml#/components/schemas/response_500'
         '200':
           description: Success
           content:
@@ -237,19 +146,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_401'
+                $ref: 'Components.yaml#/components/schemas/response_401'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_404'
+                $ref: 'Components.yaml#/components/schemas/response_404'
         '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/response_500'
+                $ref: 'Components.yaml#/components/schemas/response_500'
         '200':
           description: Success
           content:
