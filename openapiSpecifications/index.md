@@ -8,6 +8,7 @@ Below you will find a list of all OpenAPI specifications. Each specification is 
 - [Auth: Salesforce](./Auth/Salesforce.yaml)
 - [Accounts](./Accounts.yaml)
 - [Notes](./Notes.yaml)
+- [Tasks](./Tasks.yaml)
 - [Users](./Users.yaml)
 
 
