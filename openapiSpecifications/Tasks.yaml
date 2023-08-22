@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Account Tasks API's
+  description: Following api's will be called from the SalesSparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+paths:
+  /v1/accounts/{account_id}/tasks:
+    post:
+      description: Api will create task
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                crm_organization_user_id:
+                  type: string
+                  example: 'Abc'
+                description:
+                  type: string
+                  example: 'Complete remaining task'
+                due_date:
+                  type: string
+                  format: date
+                  example: '2023-07-21'
+              required:
+                - crm_organization_user_id
+                - description
+                - due_date
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    example: "00U1e000003TnVXEA0"
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+
+    get:
+      description: Api will return list of tasks for accountId
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_ids:
+                    type: array
+                    items:
+                      type: string
+                      example: "00U1e000003TUB8EAO"
+                  task_map_by_id:
+                    type: object
+                    properties:
+                      00U1e000003TUB8EAO:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "00U1e000003TUB8EAO"
+                          creator_name:
+                            type: string
+                            example: "xyz"
+                          crm_organization_user_name:
+                            type: string
+                            example: "abc"
+                          description: 
+                            type: string
+                            example: "Complete remaining task"
+                          due_date:
+                            type: string
+                            format: date
+                            example: "2019-10-12"
+                          last_modified_time:
+                            type: string
+                            format: date-time
+                            example: "2019-10-12T07:20:50.52Z"
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
