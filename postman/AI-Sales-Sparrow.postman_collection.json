@@ -172,6 +172,37 @@
 					"response": []
 				},
 				{
+					"name": "Delete Note",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/notes/{{note-id}}",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"notes",
+								"{{note-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Note List",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
