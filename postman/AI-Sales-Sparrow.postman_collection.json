@@ -280,7 +280,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"crmOrganizationUserId\":\"0051e0000047G03AAE\",\n    \"description\": \"Update remaining documentations\",\n    \"dueDate\": \"2023-12-01\"\n}",
+							"raw": "{\n    \"crm_organization_user_id\":\"0051e0000047G03AAE\",\n    \"description\": \"Update remaining documentations\",\n    \"due_date\": \"2023-12-01\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
