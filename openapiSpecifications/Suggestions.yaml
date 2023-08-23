@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Suggestions API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+
+paths:
+  /v1/suggestions/crm-actions:
+    post:
+      description: Api will return suggestions for tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: The text for which to receive task suggestions
+              required:
+                - text
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  add_task_suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                          description: The description of the task
+                          example: 'Call John Doe'
+                        due_date:
+                          type: string
+                          description: Optional. The due date for the task in YYYY-MM-DD format.
+                          format: date
+                          example: '2020-07-20'
+                      required:
+                        - description
+        '400':
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_500'
