@@ -216,5 +216,5 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
-        '200':
+        '204':
           description: Success
