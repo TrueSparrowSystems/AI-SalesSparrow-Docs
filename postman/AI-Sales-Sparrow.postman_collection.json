@@ -269,6 +269,41 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Create Task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"crmOrganizationUserId\":\"0051e0000047G03AAE\",\n    \"description\": \"Update remaining documentations\",\n    \"dueDate\": \"2023-12-01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
