@@ -10,9 +10,6 @@ Here you will find all the sequence diagrams for the API endpoints.
 
 - Accounts
   - [Get Accounts](./Accounts/GetAccounts.mermaid)
-  - [Create Note](./Accounts/CreateNote.mermaid)
-  - [Get Notes List](./Accounts/GetNotesList.mermaid)
-  - [Get Note By Id](./Accounts/GetNoteById.mermaid)
   
 - Account Notes
   - [Get Account Note By Id](./AccountNotes/GetNoteById.mermaid)
@@ -20,11 +17,13 @@ Here you will find all the sequence diagrams for the API endpoints.
   - [Create Account Note](./AccountNotes/CreateNote.mermaid)
   - [Delete Account Note](./AccountNotes/DeleteNote.mermaid)
 
+- Account Tasks
+  - [Create Account Task](./AccountTasks/CreateTask.mermaid)
+
 - User
   - [Get Current User](./User/GetCurrentUser.mermaid)
 
 - Common
   - [OAuth Request Helper](./Common/OAuthRequestHelper.mermaid)
   - [User Auth Interceptor](./Common/UserAuthIntercepter.mermaid)
-
-- [Salesforce OAuth Api Flow](./SalesforceOAuthApiFlow.mermaid)
+  - [Salesforce OAuth Api Flow](./Common/SalesforceOAuthApiFlow.mermaid)
