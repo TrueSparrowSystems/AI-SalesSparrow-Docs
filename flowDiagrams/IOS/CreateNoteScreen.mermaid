@@ -31,5 +31,12 @@ sequenceDiagram
     AS->>CNVM: Response
     CNVM->>TVM: Response message
     TVM->>CNS: Displays note created successfully message
-    CNVM->>CNS: Response
     note over CNS: Display created note
+    CNVM->>CNS: Response
+    CNS->>CNVM: Generate recommendations
+    CNVM->>AS: invoke post method
+    AS-->>S: Request: Generate recommendations
+    note right of AS: POST {api_base_url}/{account_id}/notes/generate/{note_id}
+    S-->>AS: Success response
+    AS->>CNVM: Response
+    CNVM->>CNS: Display recommendations
