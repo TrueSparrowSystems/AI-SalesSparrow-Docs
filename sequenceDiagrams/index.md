@@ -19,6 +19,7 @@ Here you will find all the sequence diagrams for the API endpoints.
 
 - Account Tasks
   - [Create Account Task](./AccountTasks/CreateTask.mermaid)
+  - [Ger Account Tasks List](./AccountTasks/GetTasksList.mermaid)
 
 - User
   - [Get Current User](./User/GetCurrentUser.mermaid)
