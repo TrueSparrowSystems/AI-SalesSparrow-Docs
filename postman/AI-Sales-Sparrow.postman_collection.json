@@ -269,6 +269,48 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "CrmOrganizationUsers",
+			"item": [
+				{
+					"name": "Search User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/crm-organization-users?q=auto",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"crm-organization-users"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "auto"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
