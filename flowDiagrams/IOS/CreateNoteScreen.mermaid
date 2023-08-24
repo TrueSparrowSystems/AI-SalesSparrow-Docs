@@ -2,9 +2,11 @@ sequenceDiagram
     title Create Note
 
     participant CNS as CreateNoteScreen
+    participant CTS as CreateTaskScreen
     participant SAS as SearchAccountScreen
     participant TVM as ToastViewModel
     participant CNVM as CreateNoteViewModel
+    participant CTVM as CreateTaskViewModel
     participant AS as ApiService
     participant S as Server
 
@@ -31,12 +33,36 @@ sequenceDiagram
     AS->>CNVM: Response
     CNVM->>TVM: Response message
     TVM->>CNS: Displays note created successfully message
-    note over CNS: Display created note
     CNVM->>CNS: Response
-    CNS->>CNVM: Generate recommendations
+    note over CNS: Display created note
+    CNVM->>CNVM: Generate recommendations
     CNVM->>AS: invoke post method
     AS-->>S: Request: Generate recommendations
-    note right of AS: POST {api_base_url}/{account_id}/notes/generate/{note_id}
+    note right of AS: POST {api_base_url}/v1/suggestions/crm-actions
     S-->>AS: Success response
     AS->>CNVM: Response
-    CNVM->>CNS: Display recommendations
+    CNVM->>CNS: Display suggested tasks
+
+    break if no suggestions are found
+    note over CNS: display no recommendation message
+    end
+
+    alt if User edits suggestion description
+    CNS->>CTS: add/edit task flow
+    CTS->>CNS: edit, save or cancel task
+    end
+
+    CNS->>CTVM: User clicks add task
+    CTVM->>AS: invoke post method
+    AS-->>S: Request: Create task
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>CNVM: Response
+        CNVM->>TVM: error message
+        TVM->>CNS: Displays error toast message
+    end
+
+    S-->>AS: Success Response
+    AS->>CTVM: Response
+    CTVM->>CNS: Displays task added successfully message
