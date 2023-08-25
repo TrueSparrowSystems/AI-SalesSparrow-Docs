@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5c778d33-7f34-44d2-bb6f-faf351054b25",
+		"_postman_id": "0f7faee2-ef4e-461e-a225-cdcd3845beae",
 		"name": "AI-Sales-Sparrow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -404,6 +404,40 @@
 									"key": "q",
 									"value": "auto"
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Suggestions",
+			"item": [
+				{
+					"name": "Crm Action Suggestions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"We reviewed the tasks that the team has completed since the last meeting and discussed additional projects.\\n\\nHere are the main topics we discussed:\\n\\nJoe updated us on the calendar for editorial, advertorial and social media content\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/suggestions/crm-actions",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"crm-actions"
 							]
 						}
 					},

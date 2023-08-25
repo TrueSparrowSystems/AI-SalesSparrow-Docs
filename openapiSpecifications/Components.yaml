@@ -74,6 +74,23 @@ components:
         pagination_identifier: 
          type: string
          example: "xyz"
+
+    add_task_suggestions:
+      type: array
+      items:
+        type: object
+        properties:
+          description:
+            type: string
+            description: The description of the task
+            example: 'Call John Doe'
+          due_date:
+            type: string
+            description: Optional. The due date for the task in YYYY-MM-DD format.
+            format: date
+            example: '2023-07-20'
+        required:
+          - description
           
     param_errors: 
       type: object
