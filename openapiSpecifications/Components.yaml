@@ -13,6 +13,68 @@ components:
           type: string
           example: 'sampleuser@gmail.com'
           
+    account:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Account ID
+          example: "abc123abc"
+        name:
+          type: string
+          description: Account name
+          example: "Sample account"
+        additional_fields:
+          type: object
+          description: Additional fields for the account
+          properties:
+            website:
+              type: string
+              description: Website url (Optional)
+              example: "www.xyz.com"
+        account_contact_associations_id:
+          type: string
+          description: ID of associated account contact association
+          example: "abc123abc"
+
+    contact:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Contact ID
+          example: "abcd1234abcd"
+        name:
+          type: string
+          description: Contact name
+          example: "Sample contact name"
+        additional_fields:
+          type: object
+          description: Additional fields for the contact
+          properties:
+            email:
+              type: string
+              description: Email Id (Optional)
+              example: "xyz@gmail.com"
+
+    account_contact_association:
+      type: object
+      properties:
+        contact_ids:
+          type: array
+          items:
+            type: string
+            example: "abcd1234abcd"
+          description: List of contact IDs associated with the account
+
+    next_page_payload:
+      type: object
+      description: Payload for next page of data (if applicable)
+      properties: 
+        pagination_identifier: 
+         type: string
+         example: "xyz"
+          
     param_errors: 
       type: object
       properties: 

@@ -1,0 +1,93 @@
+sequenceDiagram
+  title Get Accounts Feed
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Controller
+    participant service as GetAccountsFeed Service
+    participant util as Utility Library 
+    participant factory as GetAccountsFeed Factory
+    participant crm as Salesforce GetAccountsFeed Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+note right of ui: Request: <br>GET {api_base_url}/v1/accounts/feed<br><br>query params:  <br>pagination_identifier (Identifier for pagination) [optional]
+
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthInterceptor.mermaid'
+
+    api->>validator: Validate query params
+
+    break If mandatory params not present in the body
+        validator->>exceptionHandler: Throws exception
+        exceptionHandler-->>ui:Return 400 error response 
+    end
+
+    alt If pagination_identifier is present
+        break If invalid base64 encoded pagination_identifier
+            validator->>exceptionHandler: Throws exception
+            exceptionHandler-->>ui: Return 400 error response
+    end
+end
+
+    validator->>controller: Send validated params<br>params: pagination_identifier
+    
+    controller->>service: Call getAccountFeedDetails method of GetAccountsFeedService<br> params: request, accountsFeedDto
+    note over service: Get current_user attribute from request and assign it to currentUser
+
+    alt If paginationIdentifier is not null
+        service->> util: Base64 decode paginationIdentifier 
+        break If error decoding paginationIdentifier
+            util->>exceptionHandler: Throws exception
+            exceptionHandler-->>ui:Return 500 error response 
+        end
+        util-->>service: Response decoded object
+        note over service: Parse the decoded object to paginationIdentifier pojo class object
+        note over service: Calculate the offset for pagination based on page no from paginationIdentifier
+    else paginationIdentifier is null
+        note over service: Use default offset i.e 0
+    end
+
+    service->>factory: Call getAccounts method of GetAccountsFactory<br>params: current_user, searchTerm: null, viewKind: FEED, offset
+    note over factory: Based on current_user userKind identify CRM
+
+    factory->>crm: Call getAccounts method of particular CRM service<br>params: current_user, searchTerm: null, viewKind: FEED, offset
+
+    note over crm: Fetch salesforceUserId from current_user
+    note over crm: Prepare url for composite API based on FEED view kind and offset
+
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with common helper function<br><br>Refer this document for common helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=SELECT Id, Name, Website (SELECT Id, Name, Title FROM Contacts) FROM Account ORDER BY LastModifiedDate ASC LIMIT ${limit} OFFSET ${offset}"<br>referenceId: "getAccounts"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exception
+        exceptionHandler-->>ui: Return 500 error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+    note over crm:  Format Salesforce Response into GetAccountsFormatterDto
+
+    crm-->>factory: Response:<br>GetAccountsFormatterDto
+    factory-->>service: Response:<br>GetAccountsFormatterDto
+    note over service: Prepare next_page_payload 
+    alt If length of account_ids is less than the limit
+        note over service: Set pagination_identifier as null in next_page_payload
+    else length of account_ids is greater than limit
+        note over service: Increment the page_number (0 initially) and update the page_number in the paginationIdentifier map
+        service->> util: Base64 encode paginationIdentifier 
+        break If error encoding paginationIdentifier
+            util->>exceptionHandler: Throws exception
+            exceptionHandler-->>ui: Return 500 error response 
+        end
+    end
+    note over service: Update the next_page_payload entity in the response
+    service-->> controller: Response:<br>AccountsFeedDto
+    controller-->>api: Response:<br>AccountsFeedDto
+    
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> {<br>account_ids: [],<br>account_map_by_id: {},<br>contact_map_by_id: {},<br>account_contact_associations_map_by_id: {},<br>next_page_payload: {}<br>} <br><br>Response headers:<br> cookie 
