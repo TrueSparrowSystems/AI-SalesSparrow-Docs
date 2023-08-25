@@ -1,0 +1,78 @@
+sequenceDiagram
+  title Create Task API
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Task Controller
+    participant service as CreateTask Service
+    participant factory as CreateTask Factory
+    participant crm as Salesforce CreateTask Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: Request: <br>POST {api_base_url}/v1/accounts/{account_id}/tasks<br><br>Path params:  <br>account_id <br><br> request body:<br>crm_organization_user_id <br>(CRM Organization userId for assigning task to User)<br>description (Description of Task)<br>due_date (Due Date of Task)
+
+    note over api: Validate and fetch current user data from cookie<br>set currentUser attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If currentUser not found
+        api-->>ui: Error Response<br>currentUser Not Found
+    end
+
+    note over api: CreateTaskDto  {<br>crmOrganizationUserId,<br>description,<br>dueDate<br>}
+
+    api->>validator: Validate path and body params
+
+    break 
+        alt If mandatory params not present in the body    
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return error response
+        else If description character length > 32000
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return error response
+        else If due_date format is not valid date format
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return error response
+        end
+    end
+
+    validator->>controller: Send validated params<br>params: CreateTaskDto , accountId
+    
+    controller->>service: Call createTask method of CreateTaskService<br> params: request, CreateTaskDto, accountId
+    note over service: GetAttribute of current_user from request<br>Which was set by interceptor
+
+    service->>factory: Call createTask method of CreateTaskFactory<br>params: currentUser, CreateTaskDto, accountId
+    note over factory: Based on currentUser identify CRM
+
+    factory->>crm: Call createTask method of particular CRM service<br>params: currentUser, CreateTaskDto, accountId
+
+    note over crm: fetch salesforceUserId from request currentUser
+    break If salesforceUserId is not present in currentUser.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return error response 
+    end
+    note over crm: Get subject as first 60 characters of the description.
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId, body>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: POST<br> url: "/services/data/v58.0/sobjects/Task"<br>body: {<br>"Subject":@{subject},<br>"Description":@{CreateTaskDto.description},<br>"WhatId": @{accountId}, <br>"OwnerId": @{CreateTaskDto.crmOrganizationUserId},<br>"ActivityDate": @{CreateTaskDto.dueDate}<br>} <br>referenceId: "CreateTask"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+
+    note over crm: Format Salesforce Response into CreateTaskFormatterDto<br>{taskId: String}
+
+    crm-->>factory: Response:<br>CreateTaskFormatterDto
+    factory-->>service: Response:<br>CreateTaskFormatterDto
+    service-->> controller: Response:<br>CreateTaskFormatterDto
+    controller-->>api: Response:<br>CreateTaskFormatterDto
+    note right of api: CreateTaskFormatterDto
+
+    api-->>ui: Success:201
+    note right of ui: Response body: <br> {task_id:""}<br><br>Response headers:<br> cookie 
