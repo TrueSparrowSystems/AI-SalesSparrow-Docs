@@ -31,42 +31,28 @@ paths:
                 type: object
                 properties:
                   add_task_suggestions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        description:
-                          type: string
-                          description: The description of the task
-                          example: 'Call John Doe'
-                        due_date:
-                          type: string
-                          description: Optional. The due date for the task in YYYY-MM-DD format.
-                          format: date
-                          example: '2020-07-20'
-                      required:
-                        - description
+                    $ref: 'Components.yaml#/components/schemas/add_task_suggestions'
         '400':
           description: "Bad Request"
           content:
             application/json:
               schema:
-                $ref: '../Components.yaml#/components/schemas/response_400'
+                $ref: 'Components.yaml#/components/schemas/response_400'
         '401':
           description: Unauthorized access
           content:
             application/json:
               schema:
-                $ref: '../Components.yaml#/components/schemas/response_401'
+                $ref: 'Components.yaml#/components/schemas/response_401'
         '404':
           description: Not Found
           content:
             application/json:
               schema:
-                $ref: '../Components.yaml#/components/schemas/response_404'
+                $ref: 'Components.yaml#/components/schemas/response_404'
         '500':
           description: Something went wrong
           content:
             application/json:
               schema:
-                $ref: '../Components.yaml#/components/schemas/response_500'
+                $ref: 'Components.yaml#/components/schemas/response_500'
