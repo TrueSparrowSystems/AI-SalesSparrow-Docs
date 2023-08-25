@@ -31,13 +31,13 @@ sequenceDiagram
     controller->>service: Call getAccountList method of GetAccountListService<br> params: request, q
     note over service: GetAttribute of current_user from request<br>Which was set by interceptor
 
-    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: current_user, q
-    note over factory: Based on current_user identify CRM
+    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: currentUser, q
+    note over factory: Based on currentUser identify CRM
 
-    factory->>crm: Call getAccountList method of particular CRM service<br>params: current_user, q
+    factory->>crm: Call getAccountList method of particular CRM service<br>params: currentUser, q
 
-    note over crm: fetch salesforceUserId from request current_user
-    break If salesforceUserId is not present in current_user.
+    note over crm: fetch salesforceUserId from request currentUser
+    break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return error response 
     end
