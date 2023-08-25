@@ -27,32 +27,18 @@ paths:
                 properties:
                   account_ids:
                     type: array
+                    description: List of account IDs
                     items:
                       type: string
-                      example:
-                        - 'abc123abc'
-                        - 'xyz999jjj'
+                      example: "abc1234abc"
                   account_map_by_id:
                     type: object
+                    description: Map of accounts by ID
                     properties:
-                      abc123abc:
+                      "abc1234abc":
                         type: object
                         properties:
-                          id:
-                            type: string
-                            example: "abc123abc"
-                          name:
-                            type: string
-                            example: "name1"
-                      xyz999jjj:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                            example: "xyz999jjj"
-                          name:
-                            type: string
-                            example: "name2"
+                        $ref: 'Components.yaml#/components/schemas/account'
         '400':
             description: "Bad Request"
             content:
