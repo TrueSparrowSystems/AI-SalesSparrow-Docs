@@ -34,7 +34,7 @@ components:
               example: "www.xyz.com"
         account_contact_associations_id:
           type: string
-          description: ID of associated account contact association
+          description: ID of associated account contact association (Optional)
           example: "abc123abc"
 
     contact:
