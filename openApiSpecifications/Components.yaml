@@ -126,6 +126,31 @@ components:
           format: date-time
           example: "2019-10-12T07:20:50.52Z"
 
+    task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "00U1e000003TUB8EAO"
+        creator_name:
+          type: string
+          example: "xyz"
+        crm_organization_user_name:
+          type: string
+          example: "abc"
+        description: 
+          type: string
+          example: "Complete remaining task"
+        due_date:
+          type: string
+          format: date
+          example: "2019-10-12"
+        last_modified_time:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+
+
     param_errors: 
       type: object
       properties: 
