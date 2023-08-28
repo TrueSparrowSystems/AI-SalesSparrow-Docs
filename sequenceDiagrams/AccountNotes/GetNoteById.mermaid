@@ -42,6 +42,9 @@ sequenceDiagram
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return 400 error response 
     end
+    note over crm: Escape special characters for noteId
+    note over crm: Url Encode the salesforce query string
+
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
@@ -63,6 +66,9 @@ sequenceDiagram
     CompositeRequestWrapper-->>crm: Response
 
     note over crm: Set Response as noteDetailsResponse 
+
+    note over crm: Escape special characters for noteId
+    note over crm: Url Encode the salesforce query string
 
     crm->>GetNoteRequestWrapper: Call MakeRequest of GetNoteRequestWrapper<br> params: method, Url
 

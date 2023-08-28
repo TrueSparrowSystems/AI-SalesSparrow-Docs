@@ -37,10 +37,15 @@ sequenceDiagram
     factory->>crm: Call getNotesList method of particular CRM service<br>params: currentUser, accountId
 
     note over crm: fetch salesforceUserId from request currentUser
+
     break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return 400 error response 
     end
+
+    note over crm: Escape special characters for accountId
+    note over crm: Url Encode the salesforce query string
+
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
@@ -62,6 +67,8 @@ sequenceDiagram
     CompositeRequestWrapper-->>crm: Response
 
     note over crm: Make a List of ContentDocumentId from response
+    note over crm: Escape special characters for List of ContentDocumentId
+    note over crm: Url Encode the salesforce query string
 
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 

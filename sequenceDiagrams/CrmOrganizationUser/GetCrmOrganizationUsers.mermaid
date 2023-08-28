@@ -46,6 +46,10 @@ sequenceDiagram
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return 400 error response 
     end
+
+    note over crm: Escape special characters for q (query string)
+    note over crm: Url Encode the salesforce query string
+
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
