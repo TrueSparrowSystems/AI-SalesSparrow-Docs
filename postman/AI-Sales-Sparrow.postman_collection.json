@@ -106,6 +106,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Accounts feed",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/feed?pagination_identifier",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"feed"
+							],
+							"query": [
+								{
+									"key": "pagination_identifier",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
