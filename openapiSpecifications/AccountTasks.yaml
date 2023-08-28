@@ -145,3 +145,41 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
+
+  /v1/accounts/{account_id}/tasks/{task_id}:
+    delete:
+      description: Delete task for the given task id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: task_id
+          description: Task Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '204':
+          description: Success
