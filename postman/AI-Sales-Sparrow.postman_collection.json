@@ -404,6 +404,37 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks/00T1e000007mASgEAM",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"tasks",
+								"{{task-id}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
