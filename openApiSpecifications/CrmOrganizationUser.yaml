@@ -37,12 +37,7 @@ paths:
                       00T1e000007mB43EAE:
                         type: object
                         properties:
-                          id:
-                            type: string
-                            example: "00T1e000007mB43EAE"
-                          name:
-                            type: string
-                            example: "name1"
+                        $ref: 'Components.yaml#/components/schemas/crm_organization_user'
         '400':
             description: "Bad Request"
             content:

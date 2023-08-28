@@ -149,7 +149,16 @@ components:
           type: string
           format: date-time
           example: "2019-10-12T07:20:50.52Z"
-
+    
+    crm_organization_user:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "00T1e000007mB43EAE"
+        name:
+          type: string
+          example: "name1"
 
     param_errors: 
       type: object
