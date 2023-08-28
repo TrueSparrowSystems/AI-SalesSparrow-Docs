@@ -37,6 +37,8 @@ sequenceDiagram
     factory->>crm: Call getAccountList method of particular CRM service<br>params: currentUser, q, viewKind: BASIC, offset: 0
 
     note over crm: Fetch salesforceUserId from request currentUser
+    note over crm: Escape special characters for q (search term)
+    note over crm: Url Encode the salesforce query string
     note over crm: Prepare url for composite API based on BASIC view kind
     break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
