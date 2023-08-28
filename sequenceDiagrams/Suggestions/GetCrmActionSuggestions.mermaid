@@ -21,9 +21,14 @@ sequenceDiagram
 
     api->>validator: Validate mandatory parameters
 
-    break If mandatory params not present in the body
-        validator->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui:Return 400 error response 
+   break 
+        alt If mandatory params not present in the body
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        else If text character length > 12000
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        end
     end
 
     validator->>controller: Send validated params<br>params: text
