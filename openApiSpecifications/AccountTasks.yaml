@@ -1,15 +1,14 @@
 openapi: 3.0.3
 info:
-  title: SalesSparrow Account Notes API's
+  title: SalesSparrow Account Tasks API's
   description: Following api's will be called from the SalesSparrow application
-  version: 1.0.0
+  version: '1.0'
 servers:
   - url: https://sales.truesparrow.com/api
-
 paths:
-  /v1/accounts/{account_id}/notes:
+  /v1/accounts/{account_id}/tasks:
     post:
-      description: Api will create note for accountId
+      description: Api will create task
       parameters:
         - name: account_id
           in: path
@@ -24,18 +23,37 @@ paths:
             schema:
               type: object
               properties:
-                text:
+                crm_organization_user_id:
                   type: string
-                  example: 'Content of note'
+                  example: '00U1e000003TnVXEA1'
+                description:
+                  type: string
+                  example: 'Complete remaining task'
+                due_date:
+                  type: string
+                  format: date
+                  example: '2023-07-21'
               required:
-                - text
+                - crm_organization_user_id
+                - description
+                - due_date
       responses:
-        '400':
-          description: Bad Request
+        '201':
+          description: Success
           content:
             application/json:
               schema:
-                $ref: 'Components.yaml#/components/schemas/response_400'
+                type: object
+                properties:
+                  task_id:
+                    type: string
+                    example: "00U1e000003TnVXEA0"
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
         '401':
           description: Unauthorized access
           content:
@@ -54,18 +72,9 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  note_id:
-                    type: string
-                    example: "0691e000001WXlcAAG"
+
     get:
-      description: Api will return list of notes for accountId
+      description: Api will return list of tasks for accountId
       parameters:
         - name: account_id
           in: path
@@ -74,6 +83,31 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_ids:
+                    type: array
+                    items:
+                      type: string
+                      example: "00U1e000003TUB8EAO"
+                  task_map_by_id:
+                    type: object
+                    properties:
+                      00U1e000003TUB8EAO:
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/task'
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
         '401':
           description: Unauthorized access
           content:
@@ -92,41 +126,10 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  note_ids:
-                    type: array
-                    items:
-                      type: string
-                      example: "0691e000001WXlcAAG"
-                  note_map_by_id:
-                    type: object
-                    properties:
-                      0691e000001WXlcAAG:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                            example: "0691e000001WXlcAAG"
-                          creator:
-                            type: string
-                            example: "xyz"
-                          text_preview: 
-                            type: string
-                            example: "Note Full Content"
-                          last_modified_time:
-                            type: string
-                            format: date-time
-                            example: "2019-10-12T07:20:50.52Z"
-                        
-  /v1/accounts/{account_id}/notes/{note_id}:
-    get:
-      description: Fetch details of note by note id.
+
+  /v1/accounts/{account_id}/tasks/{task_id}:
+    delete:
+      description: Delete task for the given task id.
       parameters: 
         - name: account_id
           description: Account Id
@@ -134,8 +137,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: note_id
-          description: Note Id
+        - name: task_id
+          description: Task Id
           in: path
           required: true
           schema:
@@ -159,26 +162,5 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
-        '200':
+        '204':
           description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  note_detail:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: "0691e000001WXlcAAG"
-                      creator:
-                        type: string
-                        example: "xyz"
-                      text: 
-                        type: string
-                        example: "Note Full Content"
-                      last_modified_time:
-                        type: string
-                        format: date-time
-                        example: "2019-10-12T07:20:50.52Z"
