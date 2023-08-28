@@ -28,15 +28,16 @@ sequenceDiagram
 
     validator->>controller: Send validated params<br>params: q
     
-    controller->>service: Call getAccountList method of GetAccountListService<br> params: request, q
+    controller->>service: Call getAccountList method of GetAccountListService<br> params: request, GetAccountsDto: {q:String}
     note over service: GetAttribute of current_user from request<br>Which was set by interceptor
 
-    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: currentUser, q
+    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: current_user, GetAccountsDto, viewKind: BASIC, offset: 0
     note over factory: Based on currentUser identify CRM
 
-    factory->>crm: Call getAccountList method of particular CRM service<br>params: currentUser, q
+    factory->>crm: Call getAccountList method of particular CRM service<br>params: currentUser, q, viewKind: BASIC, offset: 0
 
-    note over crm: fetch salesforceUserId from request currentUser
+    note over crm: Fetch salesforceUserId from request currentUser
+    note over crm: Prepare url for composite API based on BASIC view kind
     break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui:Return error response 
@@ -58,8 +59,8 @@ sequenceDiagram
 
     crm-->>factory: Response:<br>GetAccountsFormatterDto
     factory-->>service: Response:<br>GetAccountsFormatterDto
-    service-->> controller: Response:<br>GetAccountsFormatterDto
-    controller-->>api: Response:<br>GetAccountsFormatterDto
+    service-->> controller: Response:<br>GetAccountListResponseDto <br>{account_ids: []string, account_map_by_id: map[string][AccountEntity]}<br><br>AccountEntity:{id: string, name: string}
+    controller-->>api: Response:<br>GetAccountListResponseDto
     note right of api: {<br>account_ids:[],<br> account_map_by_id: {}<br>}
 
     api-->>ui: Success:200
