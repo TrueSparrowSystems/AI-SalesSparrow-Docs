@@ -48,9 +48,9 @@ sequenceDiagram
     note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=QUERY_STRING"<br>referenceId: "getAccounts"<br>
     
     break If any error from salesforce
-        salesforce-->>CompositeRequestWrapper: Error
+        salesforce-->>CompositeRequestWrapper: Return 500 error response
         CompositeRequestWrapper->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui: Return 400 error response
+        exceptionHandler-->>ui: Return 500 error response
     end
 
     salesforce-->>CompositeRequestWrapper: Response
