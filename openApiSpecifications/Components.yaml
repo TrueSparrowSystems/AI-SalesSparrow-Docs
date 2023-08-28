@@ -91,7 +91,41 @@ components:
             example: '2023-07-20'
         required:
           - description
-          
+
+    note:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "0691e000001WXlcAAG"
+        creator:
+          type: string
+          example: "xyz"
+        text_preview: 
+          type: string
+          example: "Note Full Content"
+        last_modified_time:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+
+    note_detail:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "0691e000001WXlcAAG"
+        creator:
+          type: string
+          example: "xyz"
+        text: 
+          type: string
+          example: "Note Full Content"
+        last_modified_time:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+
     param_errors: 
       type: object
       properties: 

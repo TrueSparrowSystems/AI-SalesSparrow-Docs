@@ -106,23 +106,12 @@ paths:
                       example: "0691e000001WXlcAAG"
                   note_map_by_id:
                     type: object
+                    description: Map of notes by ID
                     properties:
                       0691e000001WXlcAAG:
                         type: object
                         properties:
-                          id:
-                            type: string
-                            example: "0691e000001WXlcAAG"
-                          creator:
-                            type: string
-                            example: "xyz"
-                          text_preview: 
-                            type: string
-                            example: "Note Full Content"
-                          last_modified_time:
-                            type: string
-                            format: date-time
-                            example: "2019-10-12T07:20:50.52Z"
+                        $ref: 'Components.yaml#/components/schemas/note'
                         
   /v1/accounts/{account_id}/notes/{note_id}:
     get:
@@ -169,19 +158,7 @@ paths:
                   note_detail:
                     type: object
                     properties:
-                      id:
-                        type: string
-                        example: "0691e000001WXlcAAG"
-                      creator:
-                        type: string
-                        example: "xyz"
-                      text: 
-                        type: string
-                        example: "Note Full Content"
-                      last_modified_time:
-                        type: string
-                        format: date-time
-                        example: "2019-10-12T07:20:50.52Z"
+                    $ref: 'Components.yaml#/components/schemas/note_detail'
     delete:
       description: Delete note for the given note id.
       parameters: 
