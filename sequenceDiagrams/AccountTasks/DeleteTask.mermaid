@@ -52,10 +52,16 @@ sequenceDiagram
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
     note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> method: DELETE<br> url: "/services/data/v58.0/sobjects/ContentNote/${taskId}"<br>referenceId: "DeleteAccountTask"
     
-    break If any error from salesforce
-        salesforce-->>CompositeRequestWrapper: Error
+    break 
+        alt If 400 or 404 error from salesforce
+        salesforce-->>CompositeRequestWrapper: Return 400 error response: INVALID_TASK_ID
         CompositeRequestWrapper->>exceptionHandler: Throws exeption
         exceptionHandler-->>ui: Return 400 error response
+        else
+        salesforce-->>CompositeRequestWrapper:  Return 500 error response
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 500 error response
+        end
     end
 
     salesforce-->>CompositeRequestWrapper: Response

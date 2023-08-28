@@ -12,11 +12,11 @@ sequenceDiagram
     participant salesforce as Salesforce
 
     ui->>api:  Send request 
-    note right of ui: Request: POST {api_base_url}/v1/crm-organization-users<br><br>Query params: <br>q (Search CrmOrganizationUsers string) [optional] <br>
+    note right of ui: Request: POST {api_base_url}/v1/crm-organization-users<br><br>Query params: <br>q [optional] <br>(Search CrmOrganizationUsers string)
 
     note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
-    break If current_user not found
-        api-->>ui: Error Response<br>current_user Not Found
+    break If currentUser not found
+        api-->>ui: Return 401 Error Response<br>current_user Not Found
     end
 
     api->>validator: Validate query params
@@ -24,10 +24,10 @@ sequenceDiagram
     break 
         alt If mandatory params not present in the body
             validator->>exceptionHandler: Throws exeption
-            exceptionHandler-->>ui:Return error response 
+            exceptionHandler-->>ui:Return 400 error response 
         else If query character length > 200
             validator->>exceptionHandler: Throws exeption
-            exceptionHandler-->>ui:Return error response
+            exceptionHandler-->>ui:Return 400 error response
         end
     end
 
@@ -44,7 +44,7 @@ sequenceDiagram
     note over crm: fetch salesforceUserId from request currentUser
     break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui:Return error response 
+        exceptionHandler-->>ui:Return 400 error response 
     end
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
@@ -54,7 +54,7 @@ sequenceDiagram
     break If any error from salesforce
         salesforce-->>CompositeRequestWrapper: Error
         CompositeRequestWrapper->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 400 error response
     end
 
     salesforce-->>CompositeRequestWrapper: Response

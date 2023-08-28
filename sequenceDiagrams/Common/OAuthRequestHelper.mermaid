@@ -19,7 +19,7 @@ sequenceDiagram
     break If any error from dynamoDb
         dynamoDb -->> requestHelper: Error
         requestHelper ->> exceptionHandler: Throws exception 
-        exceptionHandler-->>helper: Return error response
+        exceptionHandler-->>helper: Return 500 error response
     end  
 
     dynamoDb-->>requestHelper: Response
@@ -32,7 +32,7 @@ sequenceDiagram
     break If any error encrypting access token
         kms -->> accessToken: Error
         accessToken ->> exceptionHandler: Throws exception 
-        exceptionHandler-->>helper: Return error response
+        exceptionHandler-->>helper: Return 500 error response
     end
     kms -->> accessToken: Response: decryptedAccessToken
 
@@ -52,7 +52,7 @@ sequenceDiagram
         break If any error decrypting refresh token
             kms -->> accessToken: Error
             accessToken ->> exceptionHandler: Throws exception 
-            exceptionHandler-->>helper: Return error response
+            exceptionHandler-->>helper: Return 500 error response
         end
         kms -->> accessToken: Response: decryptedRefreshToken
 
@@ -64,7 +64,7 @@ sequenceDiagram
         break If any other error from salesforce server
             salesforce -->> salesforceWrapper: Error
             salesforceWrapper ->> exceptionHandler: Throws exception 
-            exceptionHandler-->>helper: Return error response
+            exceptionHandler-->>helper: Return 500 error response
         end
 
         salesforce-->>accessToken: Response
@@ -75,7 +75,7 @@ sequenceDiagram
         break If any error encrypting Access token
             kms -->> accessToken: Error
             accessToken ->> exceptionHandler: Throws exception 
-            exceptionHandler-->>helper: Return error response
+            exceptionHandler-->>helper: Return 500 error response
         end
         kms -->> accessToken: Response: encryptedAccessToken
 
@@ -83,7 +83,7 @@ sequenceDiagram
         break If any error from dynamoDb
             dynamoDb -->> accessToken: Error
             accessToken ->> exceptionHandler: Throws exception 
-            exceptionHandler-->>helper: Return error response
+            exceptionHandler-->>helper: Return 500 error response
         end  
 
         dynamoDb-->>accessToken: Response
@@ -95,7 +95,7 @@ sequenceDiagram
         break If any error from salesforce server
             salesforce -->> requestHelper: Error
             requestHelper ->> exceptionHandler: Throws exception 
-            exceptionHandler-->>helper: Return error response
+            exceptionHandler-->>helper: Return 500 error response
         end
 
         salesforce -->> requestHelper: Response
@@ -104,7 +104,7 @@ sequenceDiagram
     break If any other error from salesforce server
         salesforce -->> requestHelper: Error
         requestHelper ->> exceptionHandler: Throws exception 
-        exceptionHandler-->>helper: Return error response
+        exceptionHandler-->>helper: Return 500 error response
     end
 
     salesforce -->> requestHelper: Response
