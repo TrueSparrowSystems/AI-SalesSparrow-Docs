@@ -11,7 +11,7 @@ Welcome to the documentation for SalesSparrow. This document serves as a central
 - [Postman Collection](./postman/AI-Sales-Sparrow.postman_collection.json)
 - [Postman Environment](./postman/AI-Sales-Sparrow-local.postman_environment.json)
 - [Salesforce Connected App Setup](salesforceConnectedAppSetup.md)
-- [Architecture Diagram](SalesSparrowArchitecture.svg)
+- [Architecture Diagram](architectureDiagram.png)
 
 ### SalesSparrow App
 
