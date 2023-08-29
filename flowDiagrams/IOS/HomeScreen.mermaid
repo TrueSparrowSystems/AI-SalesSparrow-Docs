@@ -22,7 +22,7 @@ sequenceDiagram
     HS->>ALVM : fetch accounts list data
     ALVM->>AS: Invoke get method with pagination_identifier
     AS-->>S : Request: Fetch accounts data
-    note right of AS: POST {api_base_url}/accounts/feed
+    note right of AS: GET {api_base_url}/accounts/feed
 
     break If request fails
         S-->>AS: Error response
