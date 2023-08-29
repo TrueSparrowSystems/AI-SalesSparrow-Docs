@@ -61,4 +61,8 @@ sequenceDiagram
         ADS ->> CNS: navigate to create note screen
     else if user clicks on add task button
         ADS ->> CTS: navigate to create task screen
+    else if user clicks on delete note button
+        ADS->>ADS: Delete note flow
+    else if user clicks on delete task button
+        ADS->>ADS: Delete task flow
     end
