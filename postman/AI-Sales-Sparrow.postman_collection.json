@@ -336,6 +336,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Disconnect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/auth/disconnect",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"disconnect"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -420,7 +449,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks/00T1e000007mASgEAM",
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks/{{task-id}}",
 							"host": [
 								"{{host_url}}"
 							],
