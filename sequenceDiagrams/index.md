@@ -23,6 +23,9 @@ Here you will find all the sequence diagrams for the API endpoints.
 
 - User
   - [Get Current User](./User/GetCurrentUser.mermaid)
+  
+- Suggestions
+  - [Get Suggestions](./Suggestions/GetCrmActionSuggestions.mermaid)
 
 - Common
   - [OAuth Request Helper](./Common/OAuthRequestHelper.mermaid)
