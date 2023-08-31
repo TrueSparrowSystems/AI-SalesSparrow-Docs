@@ -10,5 +10,5 @@ Please find below the list of detailed flow diagrams of all the flows in the iOS
 - [Delete Note](./DeleteNote.mermaid) - Delete unwanted notes from Account details screen.
 - [Delete Task](./DeleteTask.mermaid) - Delete unwanted tasks from Account details screen.
 - [Home Screen](./HomeScreen.mermaid) - Get paginated accounts list, allow to search account, create note.
-- [User Account Detail](./userAccountDetailScreen.mermaid) - User can logout and disconnect SalesForce.
-- [User Search](./UserSearchScreen.mermaid) - Search user to assign a task.
+- [User Account Detail](./UserAccountDetailScreen.mermaid) - User can logout and disconnect SalesForce.
+- [CRM User Search](./CrmUserSearchScreen.mermaid) - Search user to assign a task.
