@@ -5,15 +5,14 @@ sequenceDiagram
     participant ASS as AccountSearchScreen
     participant ADS as AccountDetailScreen
     participant CNS as CreateNoteScreen
-    participant TVM as ToastViewModel
-    participant ALVM as AccountListViewModel
-    participant AS as ApiService
+    participant CT as CustomToast
+    participant HSVM as HomeScreenViewModel
+    participant HR as HomeRepository
     participant S as Server
 
     alt  User clicks search account
         HS->>ASS: Search account flow
         ASS->>ADS: Navigate with selected account Id
-
 
     else  User clicks create note
         HS->>CNS: Create note flow
@@ -21,23 +20,23 @@ sequenceDiagram
 
     else
 
-    HS->>ALVM : fetch accounts list data
-    ALVM->>AS: Invoke get method with pagination_identifier
-    AS-->>S : Request: Fetch accounts data
-    note right of AS: GET {api_base_url}/accounts/feed
+    HS->>HSVM : fetch accounts list data
+    HSVM->>HR: Invoke get method with pagination_identifier
+    HR-->>S : Request: Fetch accounts data
+    note right of HR: GET {api_base_url}/accounts/feed
 
     break If request fails
-        S-->>AS: Error response
-        AS->>ALVM: Response
-        ALVM->>TVM: Error message
-        TVM->>HS: Displays error toast message
+        S-->>HR: Error response
+        HR->>HSVM: Response
+        HSVM->>CT: Error message
+        CT->>HS: Displays error toast message
     end
     
-    S-->>AS: Success response
-    AS->>ALVM: Response
-    ALVM->>TVM: Response message
-    TVM->>HS: Displays account list details
-
+    S-->>HR: Success response
+    HR->>HSVM: Response
+    HSVM->>CT: Response message
+    CT->>HS: Displays account list details
+    
     alt User clicks on any account  
         HS->>ADS:  Navigate with respective Account Id
     end

@@ -12,7 +12,7 @@ sequenceDiagram
     SNS->>SCUVM: call searchUsers method with searchText
     SCUVM->>SCUR: invoke get method
     SCUR-->>S: Send request
-    note right of SCUR: GET {api_base_url}/v1/users?q=""
+    note right of SCUR: GET {api_base_url}/v1/crm-organization-users?q=""
 
     break If request fails
         S-->>SCUR: Error response
@@ -24,4 +24,5 @@ sequenceDiagram
     S-->>SCUR: Success response
     SCUR->>SCUVM: response
     SCUVM->>SNS: Displays list of user
+    note over SNS: User selects a CRM user
     SNS->>CS: Callback to Caller screen with selected user details

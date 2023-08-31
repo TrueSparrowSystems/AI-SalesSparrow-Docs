@@ -9,8 +9,12 @@ sequenceDiagram
     participant S as Server
 
     alt  "Assign to" is not selected
-        CTS->>USS: Search user flow
+        CTS->>USS: Search CRM user flow
         USS->>CTS: Return selected user
+    end
+
+    alt  "Due Date" is not selected
+        CTS->>CTS: select date from "DatePicker"
     end
 
     note over CTS: User enters task
