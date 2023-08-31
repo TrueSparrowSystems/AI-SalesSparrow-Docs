@@ -53,7 +53,7 @@ sequenceDiagram
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
-    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=QUERY_STRING"<br>referenceId: "getCrmOrganizationUsers"<br>
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Name FROM User WHERE Name LIKE '%@{q}%' AND IsActive = true<br> ORDER BY LastModifiedDate DESC LIMIT 20"<br>referenceId: "getCrmOrganizationUsers"<br>
     
     break If any error from salesforce
         salesforce-->>CompositeRequestWrapper: Error
