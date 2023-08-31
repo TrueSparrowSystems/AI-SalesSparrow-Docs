@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Account Notes API's
+  description: Following api's will be called from the SalesSparrow application
+  version: 1.0.0
+servers:
+  - url: https://sales.truesparrow.com/api
+
+paths:
+  /v1/accounts/{account_id}/notes:
+    post:
+      description: Api will create note for accountId
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'Content of note'
+              required:
+                - text
+      responses:
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_id:
+                    type: string
+                    example: "0691e000001WXlcAAG"
+    get:
+      description: Api will return list of notes for accountId
+      parameters:
+        - name: account_id
+          in: path
+          description: Account Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_ids:
+                    type: array
+                    items:
+                      type: string
+                      example: "0691e000001WXlcAAG"
+                  note_map_by_id:
+                    type: object
+                    description: Map of notes by ID
+                    properties:
+                      0691e000001WXlcAAG:
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/note'
+                        
+  /v1/accounts/{account_id}/notes/{note_id}:
+    get:
+      description: Fetch details of note by note id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          description: Note Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note_detail:
+                    type: object
+                    properties:
+                    $ref: 'Components.yaml#/components/schemas/note_detail'
+    delete:
+      description: Delete note for the given note id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          description: Note Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '204':
+          description: Success

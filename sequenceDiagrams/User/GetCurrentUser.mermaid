@@ -10,7 +10,7 @@ sequenceDiagram
 
     note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/UserAuthIntercepter.mermaid'
     break If current_user not found
-        api-->>ui: Error Response<br>current_user Not Found
+      api-->>ui: Return 401 Error Response<br>current_user Not Found
     end
 
     api->>controller: 

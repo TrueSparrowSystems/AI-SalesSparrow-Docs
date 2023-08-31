@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Accounts API's
+  description: Following api's will be called from the SalesSparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+
+paths:
+  /v1/accounts:
+    get:
+      description: Api will return the list of accounts 
+      parameters:
+        - name: q
+          in: query
+          description: Account Search String
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_ids:
+                    type: array
+                    description: List of account IDs
+                    items:
+                      type: string
+                      example: "abc1234abc"
+                  account_map_by_id:
+                    type: object
+                    description: Map of accounts by ID
+                    properties:
+                      "abc1234abc":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/account'
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+                
+  /v1/accounts/feed:
+    get:
+      description: Api will return the paginated account feed details
+      parameters:
+        - name: pagination_identifier
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "xyz"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_ids:
+                    type: array
+                    description: List of account IDs
+                    items:
+                      type: string
+                      example: "abc1234abc"
+                  account_map_by_id:
+                    type: object
+                    description: Map of accounts by ID
+                    properties:
+                      "abc1234abc":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/account'    
+                  contact_map_by_id:
+                    type: object
+                    description: Map of contacts by ID
+                    properties:
+                      "abcd1234abcd":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/contact'    
+                  account_contact_associations_map_by_id:
+                    type: object
+                    description: Map of account contact associations by ID
+                    properties:
+                      "abc1234abc":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/account_contact_association'
+                  next_page_payload: 
+                    type: object
+                    properties:
+                    $ref: 'Components.yaml#/components/schemas/next_page_payload'
+        '400':
+            description: "Bad Request"
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'

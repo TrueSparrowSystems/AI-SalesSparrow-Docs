@@ -1,19 +1,19 @@
 openapi: 3.0.3
 info:
-  title: SalesSparrow Accounts API's
+  title: SalesSparrow CRM organization users API's
   description: Following api's will be called from the SalesSparrow application
   version: '1.0'
 servers:
   - url: https://sales.truesparrow.com/api
 
 paths:
-  /v1/accounts:
+  /v1/crm-organization-users:
     get:
-      description: Api will return the list of accounts 
+      description: Api will return the list of CRM organization users 
       parameters:
         - name: q
           in: query
-          description: Account Search String
+          description: User Search String
           required: false
           schema:
             type: string
@@ -25,34 +25,19 @@ paths:
               schema:
                 type: object
                 properties:
-                  account_ids:
+                  crm_organization_user_ids:
                     type: array
                     items:
                       type: string
                       example:
-                        - 'abc123abc'
-                        - 'xyz999jjj'
-                  account_map_by_id:
+                        - '00T1e000007mB43EAE'
+                  crm_organization_user_map_by_id:
                     type: object
                     properties:
-                      abc123abc:
+                      00T1e000007mB43EAE:
                         type: object
                         properties:
-                          id:
-                            type: string
-                            example: "abc123abc"
-                          name:
-                            type: string
-                            example: "name1"
-                      xyz999jjj:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                            example: "xyz999jjj"
-                          name:
-                            type: string
-                            example: "name2"
+                        $ref: 'Components.yaml#/components/schemas/crm_organization_user'
         '400':
             description: "Bad Request"
             content:

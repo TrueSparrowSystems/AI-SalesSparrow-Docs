@@ -1,0 +1,33 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Auth API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+
+paths:                    
+  /v1/auth/disconnect:
+    post:
+      description: Api to disconnect user from SalesSparrow
+      responses:
+        '204':
+          description: Success
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '../Components.yaml#/components/schemas/response_500'

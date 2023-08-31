@@ -1,0 +1,90 @@
+sequenceDiagram
+  title Disconnect User
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant controller as Auth Controller
+    participant service as DisconnectUser Service
+    participant factory as DisconnectUser Factory
+    participant crm as Salesforce DisconnectUser Service
+    participant tokensWrapper as Salesforce Tokens Wrapper
+    participant helper as Cookie Helper Lib
+    participant salesforce as Salesforce
+    participant dynamoDb as AWS DynamoDb
+    participant kms as AWS KMS
+
+
+    ui->>api:  Send request 
+    note right of ui: Request: <br>POST {api_base_url}/v1/auth/disconnect
+
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+
+    api->>controller: Controller specific logic execution starts
+
+    controller->>service: Call disconnect method of DisconnectUser service
+    service->>factory: Call disconnect method of DisconnectUser factory<br>params: current_user
+    note over factory: Based on current_user userKind identify CRM
+
+    factory->>crm: Call disconnect method of particular CRM service<br>params: current_user
+
+    crm ->> tokensWrapper: Call revokeRefreshToken method of Salesforce Tokens wrapper<br>params: externalUserId
+
+   tokensWrapper->>dynamoDb: Get refreshToken using externalUserId 
+    break If any error from dynamoDb
+        dynamoDb -->> tokensWrapper: Error
+        tokensWrapper ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return 500 error response
+    end      
+
+    dynamoDb-->>tokensWrapper: Response: Encrypted refresh token 
+
+    tokensWrapper ->> kms: Decrypt refresh token 
+    break If any error decrypting refresh token
+        kms -->> tokensWrapper: Error
+        tokensWrapper ->> exceptionHandler: Throws exception
+        exceptionHandler-->>ui: Return 500 error response
+    end
+    kms -->> tokensWrapper: Response: Decrypted refresh token
+
+    note over tokensWrapper: Hit the salesforce revoke token API using http client.
+    tokensWrapper->>salesforce: Send request
+    note right of tokensWrapper: POST {salesforce_base_url}/services/oauth2/revoke<br><br>Body params: <br>token [mandatory] 
+
+    break If any error from salesforce server
+        salesforce -->> tokensWrapper: Error
+        tokensWrapper ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return 500 error response
+    end
+
+    salesforce -->> tokensWrapper: Response
+    tokensWrapper -->> crm: Response
+
+    note over service: Delete user's data from database
+
+   crm->>dynamoDb: Delete tokens data from salesforce_oauth_tokens table using externalUserId
+    break If any error from dynamoDb
+        dynamoDb -->> crm: Error
+        crm ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return 500 error response
+    end  
+
+    dynamoDb-->>crm: Response
+
+    crm->>dynamoDb: Remove users salesforce specific data from salesforce_users table using externalUserId and mark the status as deleted
+    break If any error from dynamoDb
+        dynamoDb -->> crm: Error
+        crm ->> exceptionHandler: Throws exception 
+        exceptionHandler-->>ui: Return 500 error response
+    end  
+
+    dynamoDb-->>crm: Response
+    crm-->>service: Response
+    service-->> controller: Response
+
+    controller->>helper: Call clearUserCookie method of cookie helper lib <br> param: headers 
+    note over helper: Unset cookie value and change expiry to -1
+    helper-->>controller: Response (headers)
+
+    note over controller: Add headers to response
+
+    controller-->>ui: 204 Success response
