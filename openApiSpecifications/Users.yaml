@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: SalesSparrow Users API's
+  description: Following api's will be called from the sales sparrow application
+  version: '1.0'
+servers:
+  - url: https://sales.truesparrow.com/api
+
+paths:
+  /v1/users/current:
+    get:
+      description: Api will return current user entity
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_user:
+                    $ref: 'Components.yaml#/components/schemas/current_user'
+        '400':
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'

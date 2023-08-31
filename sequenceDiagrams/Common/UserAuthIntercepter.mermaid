@@ -20,7 +20,7 @@ sequenceDiagram
 
     break If cookie is null 
         cookieauth->>exceptionHandler: Throws exception 
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 401 error response
     end
 
     note over cookieauth: Read values from cookieValue <br> userId, userKind, timestamp, token
@@ -29,7 +29,7 @@ sequenceDiagram
 
     break If cookie Timestamp is expired 
         cookieauth->>exceptionHandler: Throws exception 
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 401 error response
     end
 
     note over cookieauth: Fetch And Validate User:<br>by UserKind retrive user from CRM user table
@@ -38,7 +38,7 @@ sequenceDiagram
     break If any error from dynamoDb
         dynamoDb -->> cookieauth: Error
         cookieauth ->> exceptionHandler: Throws exception 
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 500 error response
     end   
     dynamoDb -->> cookieauth: Response
 
@@ -46,7 +46,7 @@ sequenceDiagram
 
     break If CookieToken is invalid
         cookieauth->>exceptionHandler: Throws exception 
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 401 error response
     end
 
     note over cookieauth: set Updated CookieValue

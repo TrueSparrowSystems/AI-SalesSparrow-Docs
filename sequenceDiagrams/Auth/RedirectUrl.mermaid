@@ -15,13 +15,13 @@ sequenceDiagram
 
     break If mandatory params not present in the body
         validator->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui:Return error response 
+        exceptionHandler-->>ui:Return 400 error response 
     end
 
     note over validator: Validate the redirect_uri amongst whitelisted redirect_uri's
     break If not valid URI
         validator->>exceptionHandler: Throws exception 
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 400 error response
     end
 
     validator->>controller: Send validated params <br> params: redirect_uri, state

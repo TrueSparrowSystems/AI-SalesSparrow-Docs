@@ -5,12 +5,14 @@ Welcome to the documentation for SalesSparrow. This document serves as a central
 ## Table of Contents
 
 ### SalesSparrow API
-- [OpenAPI Specification](./openapiSpecifications/index.md)
+- [OpenAPI Specification](./openApiSpecifications/index.md)
 - [Sequence Diagrams](./sequenceDiagrams/index.md)
 - [Database Schema](dbSchema.dbml)
 - [Postman Collection](./postman/AI-Sales-Sparrow.postman_collection.json)
 - [Postman Environment](./postman/AI-Sales-Sparrow-local.postman_environment.json)
 - [Salesforce Connected App Setup](salesforceConnectedAppSetup.md)
+- [Salesforce Configuration Guide](salesforceConfigurationGuide.md)
+- [Architecture Diagram](architectureDiagram.png)
 
 ### SalesSparrow App
 

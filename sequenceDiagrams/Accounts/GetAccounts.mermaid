@@ -16,30 +16,33 @@ sequenceDiagram
 
     note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
     break If current_user not found
-        api-->>ui: Error Response<br>current_user Not Found
+        api-->>ui: Return 401 Error Response<br>current_user Not Found
     end
 
     api->>validator: Validate query params
 
     break If mandatory params not present in the body
         validator->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui:Return error response 
+        exceptionHandler-->>ui:Return 400 error response 
     end
 
     validator->>controller: Send validated params<br>params: q
     
-    controller->>service: Call getAccountList method of GetAccountListService<br> params: request, q
+    controller->>service: Call getAccountList method of GetAccountListService<br> params: request, GetAccountsDto: {q:String}
     note over service: GetAttribute of current_user from request<br>Which was set by interceptor
 
-    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: current_user, q
-    note over factory: Based on current_user identify CRM
+    service->>factory: Call getAccountList method of GetAccountListFactory<br>params: current_user, GetAccountsDto, viewKind: BASIC, offset: 0
+    note over factory: Based on currentUser identify CRM
 
-    factory->>crm: Call getAccountList method of particular CRM service<br>params: current_user, q
+    factory->>crm: Call getAccountList method of particular CRM service<br>params: currentUser, q, viewKind: BASIC, offset: 0
 
-    note over crm: fetch salesforceUserId from request current_user
-    break If salesforceUserId is not present in current_user.
+    note over crm: Fetch salesforceUserId from request currentUser
+    note over crm: Escape special characters for q (search term)
+    note over crm: Url Encode the salesforce query string
+    note over crm: Prepare url for composite API based on BASIC view kind
+    break If salesforceUserId is not present in currentUser.
         crm->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui:Return error response 
+        exceptionHandler-->>ui:Return 400 error response 
     end
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
@@ -47,9 +50,9 @@ sequenceDiagram
     note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=QUERY_STRING"<br>referenceId: "getAccounts"<br>
     
     break If any error from salesforce
-        salesforce-->>CompositeRequestWrapper: Error
+        salesforce-->>CompositeRequestWrapper: Return 500 error response
         CompositeRequestWrapper->>exceptionHandler: Throws exeption
-        exceptionHandler-->>ui: Return error response
+        exceptionHandler-->>ui: Return 500 error response
     end
 
     salesforce-->>CompositeRequestWrapper: Response
@@ -58,8 +61,8 @@ sequenceDiagram
 
     crm-->>factory: Response:<br>GetAccountsFormatterDto
     factory-->>service: Response:<br>GetAccountsFormatterDto
-    service-->> controller: Response:<br>GetAccountsFormatterDto
-    controller-->>api: Response:<br>GetAccountsFormatterDto
+    service-->> controller: Response:<br>GetAccountListResponseDto <br>{account_ids: []string, account_map_by_id: map[string][AccountEntity]}<br><br>AccountEntity:{id: string, name: string}
+    controller-->>api: Response:<br>GetAccountListResponseDto
     note right of api: {<br>account_ids:[],<br> account_map_by_id: {}<br>}
 
     api-->>ui: Success:200
