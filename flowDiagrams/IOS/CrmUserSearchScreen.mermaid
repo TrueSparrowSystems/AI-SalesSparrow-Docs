@@ -12,7 +12,7 @@ sequenceDiagram
     USS->>USVM: call searchUsers method with searchText
     USVM->>AS: invoke get method
     AS-->>S: Send request
-    note right of AS: GET {api_base_url}/v1/users?q=""
+    note right of AS: GET {api_base_url}/v1/crm-organization-users?q=""
 
     break If request fails
         S-->>AS: Error response
@@ -23,5 +23,6 @@ sequenceDiagram
     
     S-->>AS: Success response
     AS->>USVM: response
-    USVM->>USS: Displays list of user
-    USS->>CS: Callback to Caller screen with selected user details
+    USVM->>USS: Displays list of CRM users
+    note over USS: User selects a CRM user
+    USS->>CS: Callback to Caller screen with selected CRM user details

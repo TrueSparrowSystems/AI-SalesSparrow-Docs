@@ -3,6 +3,7 @@ sequenceDiagram
 
     participant HS as HomeScreen
     participant ASS as AccountSearchScreen
+    participant ADS as AccountDetailScreen
     participant CNS as CreateNoteScreen
     participant TVM as ToastViewModel
     participant ALVM as AccountListViewModel
@@ -11,7 +12,8 @@ sequenceDiagram
 
     alt  User clicks search account
         HS->>ASS: Search account flow
-        ASS->>HS: Return selected account
+        ASS->>ADS: Navigate with selected account Id
+
 
     else  User clicks create note
         HS->>CNS: Create note flow
@@ -35,4 +37,8 @@ sequenceDiagram
     AS->>ALVM: Response
     ALVM->>TVM: Response message
     TVM->>HS: Displays account list details
+
+    alt User clicks on any account  
+        HS->>ADS:  Navigate with respective Account Id
+    end
     end
