@@ -1,0 +1,75 @@
+sequenceDiagram
+    title Create Note
+
+    participant CNS as CreateNoteScreen
+    participant CTS as CreateTaskScreen
+    participant SAS as SearchAccountScreen
+    participant CT as CustomToast
+    participant NVM as NotesViewModel
+    participant TVM as TasksViewModel
+    participant NR as NotesRepository
+    participant TR as TasksRepository
+    participant S as Server
+
+       alt  Account is not selected
+            CNS->>SAS: Search account flow
+            SAS-->>CNS: Return selected account
+        end
+
+        CNS->>NVM : clicks on Save note
+        NVM->>NR: Invoke Save note method with account_id and note_text
+        NR-->>S : Request: Save note
+        note right of NR: POST {api_base_url}/v1/{account_id}/notes
+
+    break If request fails
+        S-->>NR: Error response
+        NR->>NVM: response
+        NVM->>CT: Displays error toast message
+    end
+    
+    S-->>NR: Success response
+    NR->>NVM: Response
+    NVM->>CT: Response
+    CT->>CNS: Displays success toast message 
+    NVM->>CNS: Displays created note
+
+    note over CNS: Display created note
+
+    NVM->>NVM: Generate recommendations
+    NVM->>NR: Get recommendations
+    NR-->>S: Request: Generate recommendations
+    note right of NR: POST {api_base_url}/v1/suggestions/crm-actions
+    break If request fails
+        S-->>NR: Error response
+        NR->>NVM: Response
+        NVM->>CT: Response message
+        CT->CNS: Displays error toast message
+    end
+    S-->>NR: Success response
+    NR->>NVM: response
+    NVM->>CNS: Display suggested task
+
+    break if no suggestions are found
+    note over CNS: display no recommendation message
+    end
+
+    alt if User edits suggestion description
+    CNS->>CTS: add/edit task flow
+    CTS->>CNS: edit, save or cancel task
+    end
+
+    CNS->>TVM: User clicks add task
+    TVM->>TR: Add task
+    TR-->>S: Request: Create task
+    note right of TR: POST {api_base_url}/v1/{account_id}/tasks
+
+    break If request fails
+        S-->>TR: Error response
+        TR->>TVM: Response
+        TVM->>CT: error message
+        CT->>CNS: Displays error toast message
+    end
+
+    S-->>TR: Success Response
+    TR->>TVM: Response
+    TVM->>CNS: Displays task added successfully message

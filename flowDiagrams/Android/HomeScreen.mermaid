@@ -1,0 +1,38 @@
+sequenceDiagram
+    title HomeScreen Flow
+
+    participant HS as HomeScreen
+    participant ASS as AccountSearchScreen
+    participant CNS as CreateNoteScreen
+    participant CT as CustomToast
+    participant HSVM as HomeScreenViewModel
+    participant HR as HomeRepository
+    participant S as Server
+
+    alt  User clicks search account
+        HS->>ASS: Search account flow
+        ASS->>HS: Return selected account
+
+    else  User clicks create note
+        HS->>CNS: Create note flow
+        CNS->>HS: Return on note creation
+
+    else
+
+    HS->>HSVM : fetch accounts list data
+    HSVM->>HR: Invoke get method with pagination_identifier
+    HR-->>S : Request: Fetch accounts data
+    note right of HR: GET {api_base_url}/accounts/feed
+
+    break If request fails
+        S-->>HR: Error response
+        HR->>HSVM: Response
+        HSVM->>CT: Error message
+        CT->>HS: Displays error toast message
+    end
+    
+    S-->>HR: Success response
+    HR->>HSVM: Response
+    HSVM->>CT: Response message
+    CT->>HS: Displays account list details
+    end

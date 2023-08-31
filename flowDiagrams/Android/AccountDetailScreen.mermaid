@@ -1,7 +1,8 @@
 sequenceDiagram
     title Account Details
 
-    participant CS as CreateNoteScreen
+    participant CNS as CreateNoteScreen
+    participant CTS as CreateTaskScreen
     participant ADS as AccountDetailScreen
     participant ADSVM as AccountDetailScreenViewModel
     participant ADSR as AccountDetailScreenRepository
@@ -9,6 +10,7 @@ sequenceDiagram
     participant NDSVM as NoteDetailScreenViewModel
     participant CT as CustomToast
     participant NR as NoteRepository
+    participant TR as TaskRepository
     participant S as Server
 
 
@@ -21,6 +23,9 @@ sequenceDiagram
     NR-->>S: Send API Request
     note right of NR: GET {api_base_url}/v1/accounts/{accountId}/notes
     
+    ADSVM->>TR: Request to fetch Account Tasks List
+    TR-->>S: Send API Request
+    note right of TR: GET {api_base_url}/v1/accounts/{accountId}/tasks
 
     break If any of the request fails
         S-->>NR: Error response
@@ -31,8 +36,10 @@ sequenceDiagram
     
     S-->>NR: Success response
     NR->>ADSVM: response
+    S-->>TR: Success response
+    TR->>ADSVM: response
     ADSVM->>ADS: Propagates response
-    note over ADS: Displays account details & notes list
+    note over ADS: Displays account details, notes list and task list
 
     alt if user clicks on any notes 
         ADS ->> NDS: navigate to note detail screen with Note Id and Account Id
@@ -56,5 +63,11 @@ sequenceDiagram
     end
 
     alt if user clicks on add notes button
-        ADS ->> CS: navigate to create note screen
+        ADS ->> CNS: navigate to create note screen
+    else if user clicks on add task button
+        ADS ->> CTS: navigate to create task screen
+    else if user clicks on delete note button
+        ADS ->> ADS: Delete note flow
+    else if user clicks on delete task button
+        ADS ->> ADS: Delete task flow
     end

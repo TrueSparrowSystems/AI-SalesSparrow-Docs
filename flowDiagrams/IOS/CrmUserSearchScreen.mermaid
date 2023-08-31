@@ -1,0 +1,28 @@
+sequenceDiagram
+    title CRM User Select and Search Flow
+
+    participant CS as Caller Screen
+    participant USS as UserSearchScreen
+    participant TVM as ToastViewModel
+    participant USVM as UserSearchViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    CS->>USS: Select or Search CRM User
+    USS->>USVM: call searchUsers method with searchText
+    USVM->>AS: invoke get method
+    AS-->>S: Send request
+    note right of AS: GET {api_base_url}/v1/crm-organization-users?q=""
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>USVM: response
+        USVM->>TVM: error message
+        TVM->>CS: error message is displayed
+    end
+    
+    S-->>AS: Success response
+    AS->>USVM: response
+    USVM->>USS: Displays list of CRM users
+    note over USS: User selects a CRM user
+    USS->>CS: Callback to Caller screen with selected CRM user details

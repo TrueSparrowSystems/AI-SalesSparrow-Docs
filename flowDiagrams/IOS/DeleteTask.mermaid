@@ -1,0 +1,26 @@
+sequenceDiagram
+    title Delete Task
+
+    participant CS as AccountDetailScreen/<br>CreateNoteScreen
+    participant TVM as ToastViewModel
+    participant ADSVM as AccountDetailScreenViewModel
+    participant AS as ApiService
+    participant S as Server
+
+
+    CS->>ADSVM: Request to delete task with accountId and taskId
+    ADSVM->>AS: Invoke delete method
+    AS-->>S: Send API Request
+    note right of AS: DELETE {api_base_url}/v1/accounts/{accountId}/tasks/{taskId}
+
+    break If the request fails
+        S-->>AS: Error response
+        AS->>ADSVM: response
+        ADSVM->>TVM: error message
+        TVM->>CS: error message is displayed
+    end
+
+    S-->>AS: Success response
+    AS->>ADSVM: Response
+    ADSVM->>CS: Response message
+    note over CS: Task is deleted
