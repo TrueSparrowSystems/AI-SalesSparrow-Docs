@@ -1,0 +1,26 @@
+sequenceDiagram
+    title Delete Note
+
+    participant ADS as AccountDetailScreen
+    participant CT as CustomToast
+    participant ADSVM as AccountDetailScreenViewModel
+    participant NR as NoteRepository
+    participant S as Server
+
+
+    ADS->>ADSVM: Request to delete task with accountId and noteId
+    ADSVM->>NR: Invoke delete method
+    NR-->>S: Send API Request
+    note right of NR: DELETE {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
+
+    break If the request fails
+        S-->>NR: Error response
+        NR->>ADSVM: response
+        ADSVM->>CT: error message
+        CT->>ADS: error message is displayed
+    end
+
+    S-->>NR: Success response
+    NR->>ADSVM: Response
+    ADSVM->>ADS: Response message
+    note over ADS: Note is deleted

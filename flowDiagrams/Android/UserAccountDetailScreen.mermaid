@@ -1,0 +1,33 @@
+sequenceDiagram
+    title User Account Detail Screen
+
+    participant LS as LoginScreen
+    participant UADS as UserAccountDetailScreen
+    participant AVM as AuthenticationViewModal
+    participant AR as AuthenticationRepository
+    participant S as Server
+
+    alt Clicks logout
+        UADS->>AVM: call logout method
+        AVM->>AR: invoke post method
+        AR-->> S: Request: logout user
+        note right of AR: POST {api_base_url}/v1/auth/logout
+
+        S-->>AR: Response
+        AR->>AVM: 
+        note over AVM: reset user login cookie
+
+        AVM->>LS: Navigate to LoginScreen
+    else Clicks disconnect
+        UADS->>AVM: call disconnectUser method
+        AVM->>AR: invoke post method
+        AR-->> S: Request: disconnect user
+        note right of AR: POST {api_base_url}/v1/auth/disconnect
+
+        S-->>AR: Response
+        AR->>AVM: 
+        note over AVM: reset user login cookie
+
+        AVM->>LS: Navigate to LoginScreen
+    end
+

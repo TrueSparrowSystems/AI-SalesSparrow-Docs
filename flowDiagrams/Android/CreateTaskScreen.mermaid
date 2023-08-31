@@ -1,0 +1,32 @@
+sequenceDiagram
+    title Create Task
+
+    participant CTS as CreateTaskScreen
+    participant USS as UserSearchScreen
+    participant CT as CustomToast
+    participant TVM as TaskViewModel
+    participant TR as TaskRepository
+    participant S as Server
+
+    alt  "Assign to" is not selected
+        CTS->>USS: Search user flow
+        USS->>CTS: Return selected user
+    end
+
+    note over CTS: User enters task
+
+    CTS->>TVM : Clicks on Save task
+    TVM->>TR: Invoke createTask method with<br>crm_organization_user_id, description and due_date
+    TR-->>S: Request: Create task
+    note right of TR: POST {api_base_url}/v1/{account_id}/tasks
+
+    break If request fails
+        S-->>TR: Error response
+        TR->>TVM: Response
+        TVM->>CT: Error message
+        CT->>CTS: Displays error toast message
+    end
+    
+    S-->>TR: Success response
+    TR->>TVM: Response
+    TVM->>CTS: Displays task created successfully message

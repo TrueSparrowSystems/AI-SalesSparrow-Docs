@@ -1,5 +1,5 @@
 sequenceDiagram
-    title User Select and Search Flow
+    title CRM User Select and Search Flow
 
     participant CS as Caller Screen
     participant USS as UserSearchScreen
@@ -8,7 +8,7 @@ sequenceDiagram
     participant AS as ApiService
     participant S as Server
 
-    CS->>USS: Select or Search User
+    CS->>USS: Select or Search CRM User
     USS->>USVM: call searchUsers method with searchText
     USVM->>AS: invoke get method
     AS-->>S: Send request

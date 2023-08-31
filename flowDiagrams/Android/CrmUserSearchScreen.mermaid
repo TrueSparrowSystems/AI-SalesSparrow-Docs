@@ -1,0 +1,27 @@
+sequenceDiagram
+    title CRM User Select and Search Flow
+
+    participant CS as Caller Screen
+    participant SNS as SearchNameSheet
+    participant CT as CustomToast
+    participant SCUVM as SearchCrmUserNameViewModal
+    participant SCUR as SearchCrmUserNameRepository
+    participant S as Server
+
+    CS->>SNS: Select or Search CRM User
+    SNS->>SCUVM: call searchUsers method with searchText
+    SCUVM->>SCUR: invoke get method
+    SCUR-->>S: Send request
+    note right of SCUR: GET {api_base_url}/v1/users?q=""
+
+    break If request fails
+        S-->>SCUR: Error response
+        SCUR->>SCUVM: response
+        SCUVM->>CT: error message
+        CT->>CS: error message is displayed
+    end
+    
+    S-->>SCUR: Success response
+    SCUR->>SCUVM: response
+    SCUVM->>SNS: Displays list of user
+    SNS->>CS: Callback to Caller screen with selected user details
