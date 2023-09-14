@@ -1,6 +1,10 @@
 # AI SalesSparrow Documentation
 
-Welcome to the documentation for SalesSparrow. This document serves as a central hub to access various documentation resources related to SalesSparrow.
+Welcome to the documentation for SalesSparrow. 
+
+SalesSparrow enables anyone to connect their Salesforce account and access their lead details, gather insights, and effortlessly add notes directly in Salesforce. It also provides AI-driven suggestions based on their notes for next steps, enabling them to create and manage tasks and events.
+
+This document serves as a central hub to access various documentation resources related to SalesSparrow.
 
 ## Table of Contents
 
