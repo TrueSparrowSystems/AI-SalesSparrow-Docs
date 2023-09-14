@@ -7,9 +7,11 @@ Here you will find all the sequence diagrams for the API endpoints.
   - [Salesforce Connect](./Auth/SalesforceConnect.mermaid)
   - [Redirect Url](./Auth/RedirectUrl.mermaid)
   - [Logout](./Auth/Logout.mermaid)
+  - [Disconnect](./Auth/Disconnect.mermaid)
 
 - Accounts
   - [Get Accounts](./Accounts/GetAccounts.mermaid)
+  - [Get Accounts Feed](./Accounts/GetAccountsFeed.mermaid)
   
 - Account Notes
   - [Get Account Note By Id](./AccountNotes/GetNoteById.mermaid)
@@ -19,7 +21,12 @@ Here you will find all the sequence diagrams for the API endpoints.
 
 - Account Tasks
   - [Create Account Task](./AccountTasks/CreateTask.mermaid)
-  - [Ger Account Tasks List](./AccountTasks/GetTasksList.mermaid)
+  - [Get Account Tasks List](./AccountTasks/GetTasksList.mermaid)
+  - [Delete Account Task](./AccountTasks/DeleteTask.mermaid)
+
+- Account Events
+  - [Create Account Event](./AccountEvents/CreateEvent.mermaid)
+  - [Delete Account Event](./AccountEvents/DeleteEvent.mermaid)
 
 - User
   - [Get Current User](./User/GetCurrentUser.mermaid)

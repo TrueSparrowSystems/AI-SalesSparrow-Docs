@@ -9,7 +9,6 @@ Below you will find a list of all OpenAPI specifications. Each specification is 
 - [Accounts](./Accounts.yaml)
 - [AccountNotes](./AccountNotes.yaml)
 - [AccountTasks](./AccountTasks.yaml)
+- [AccountEvents](./AccountEvents.yaml)
 - [Users](./Users.yaml)
 - [Suggestions](./Suggestions.yaml)
-
-
