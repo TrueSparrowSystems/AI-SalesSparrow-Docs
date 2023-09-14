@@ -149,7 +149,32 @@ components:
           type: string
           format: date-time
           example: "2019-10-12T07:20:50.52Z"
-    
+
+    event:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "00U1e000003TUB8EAO"
+        creator_name:
+          type: string
+          example: "xyz"
+        description: 
+          type: string
+          example: "Event Content"
+        start_datetime:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+        end_datetime:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+        last_modified_time:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+          
     crm_organization_user:
       type: object
       properties:
