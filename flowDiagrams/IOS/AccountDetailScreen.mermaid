@@ -1,6 +1,7 @@
 sequenceDiagram
     title Account Details
 
+    participant B as Browser
     participant CNS as CreateNoteScreen
     participant CTS as CreateTaskScreen
     participant ADS as AccountDetailScreen
@@ -34,9 +35,10 @@ sequenceDiagram
     S-->>AS: Success response
     AS->>ADSVM: response
     ADSVM->>ADS: Propagates response
-    note over ADS: Displays account details, notes list and tasks list
-
-    alt if user clicks on any notes 
+    note over ADS: Displays account details, contact details, notes list, tasks list and events list
+    alt if user clicks on link
+        ADS ->> B: Open URL
+    else if user clicks on any notes 
         ADS ->> NDS: navigate to note detail screen with Note Id and Account Id
         NDS ->> NDSVM: Request to Fetch Note Detail with Note Id
         NDSVM ->> AS: Send API Request
