@@ -26,6 +26,7 @@ Here you will find all the sequence diagrams for the API endpoints.
 
 - Account Events
   - [Create Account Event](./AccountEvents/CreateEvent.mermaid)
+  - [Get Account Events List](./AccountEvents/GetEventsList.mermaid)
   - [Delete Account Event](./AccountEvents/DeleteEvent.mermaid)
 
 - User
