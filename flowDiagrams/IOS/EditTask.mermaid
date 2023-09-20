@@ -1,25 +1,25 @@
 sequenceDiagram
     title Edit Task
 
-    participant ADS as AccountDetailScreen
+    participant ETS as EditTaskScreen
     participant TVM as ToastViewModel
-    participant ADSVM as AccountDetailScreenViewModel
+    participant ETVM as EditTaskScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-    ADS->>ADSVM: Request to edit note with accountId, taskId and task details
-    ADSVM->>AS: Invoke editTask method
+    ETS->>ETVM: Request to edit task with accountId, taskId and task details
+    ETVM->>AS: Invoke editTask method
     AS-->>S: Send API Request
     note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/tasks/{taskId}
 
     break If the request fails
         S-->>AS: Error response
-        AS->>ADSVM: response
-        ADSVM->>TVM: error message
-        TVM->>ADS: error message is displayed
+        AS->>ETVM: response
+        ETVM->>TVM: error message
+        TVM->>ETS: error message is displayed
     end
 
     S-->>AS: Success response
-    AS->>ADSVM: Response
-    ADSVM->>ADS: Response message
-    note over ADS: Task is Updated
+    AS->>ETVM: Response
+    ETVM->>ETS: Response message
+    note over ETS: Task is Updated
