@@ -1,25 +1,25 @@
 sequenceDiagram
     title Edit Note
 
-    participant ADS as AccountDetailScreen
+    participant ENS as EditNoteScreen
     participant TVM as ToastViewModel
-    participant ADSVM as AccountDetailScreenViewModel
+    participant ENVM as EditNoteScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-    ADS->>ADSVM: Request to edit note with accountId, noteId and note details
-    ADSVM->>AS: Invoke editNote method
+    ENS->>ENVM: Request to edit note with accountId, noteId and note details
+    ENVM->>AS: Invoke editNote method
     AS-->>S: Send API Request
     note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
 
     break If the request fails
         S-->>AS: Error response
-        AS->>ADSVM: response
-        ADSVM->>TVM: error message
-        TVM->>ADS: error message is displayed
+        AS->>ENVM: response
+        ENVM->>TVM: error message
+        TVM->>ENS: error message is displayed
     end
 
     S-->>AS: Success response
-    AS->>ADSVM: Response
-    ADSVM->>ADS: Response message
-    note over ADS: Note is Updated
+    AS->>ENVM: Response
+    ENVM->>ENS: Response message
+    note over ENS: Note is Updated
