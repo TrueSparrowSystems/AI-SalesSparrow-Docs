@@ -1,0 +1,37 @@
+sequenceDiagram
+    title Create Event
+
+    participant CES as CreateEventScreen
+    participant TVM as ToastViewModel
+    participant CEVM as CreateEventViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    alt  "Start Date/Time" is not selected
+        CES->>CES: select start date from "DatePicker"
+        CES->>CES: select start time from "TimePicker"
+    end
+
+    alt  "End Date/Time" is not selected
+        CES->>CES: select end date from "DatePicker"
+        CES->>CES: select end time from "TimePicker"
+    end
+
+    note over CES: User enters event description
+
+    CES->>CEVM : Clicks on Save event
+    CEVM->>AS: Invoke createEvent method with description, start_datetime and end_datetime
+    AS-->>S : Request: Create event
+    note right of AS: POST {api_base_url}/{account_id}/events
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>CEVM: Response
+        CEVM->>TVM: Error message
+        TVM->>CES: Displays error toast message
+    end
+    
+    S-->>AS: Success response
+    AS->>CEVM: Response
+    CEVM->>TVM: Response message
+    TVM->>CES: Displays event created successfully message
