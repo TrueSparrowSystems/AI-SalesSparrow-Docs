@@ -2,11 +2,13 @@ sequenceDiagram
     title Create Note
 
     participant CNS as CreateNoteScreen
-    participant CTS as CreateTaskScreen
     participant SAS as SearchAccountScreen
+    participant CTS as CreateTaskScreen
+    participant CES as CreateEventScreen
     participant TVM as ToastViewModel
     participant CNVM as CreateNoteViewModel
     participant CTVM as CreateTaskViewModel
+    participant CEVM as CreateEventViewModel
     participant AS as ApiService
     participant S as Server
 
@@ -41,13 +43,13 @@ sequenceDiagram
     note right of AS: POST {api_base_url}/v1/suggestions/crm-actions
     S-->>AS: Success response
     AS->>CNVM: Response
-    CNVM->>CNS: Display suggested tasks
+    CNVM->>CNS: Display suggested tasks and events
 
     break if no suggestions are found
     note over CNS: display no recommendation message
     end
 
-    alt if User edits suggestion description
+    alt if User edits suggested task's description
     CNS->>CTS: add/edit task flow
     CTS->>CNS: edit, save or cancel task
     end
@@ -66,3 +68,23 @@ sequenceDiagram
     S-->>AS: Success Response
     AS->>CTVM: Response
     CTVM->>CNS: Displays task added successfully message
+
+    alt if User edits suggested event's description
+    CNS->>CES: add/edit event flow
+    CES->>CNS: edit, save or cancel event
+    end
+    
+    CNS->>CEVM: User clicks add event
+    CEVM->>AS: invoke post method
+    AS-->>S: Request: Create event
+
+    break If request fails
+        S-->>AS: Error response
+        AS->>CNVM: Response
+        CNVM->>TVM: error message
+        TVM->>CNS: Displays error toast message
+    end
+
+    S-->>AS: Success Response
+    AS->>CEVM: Response
+    CEVM->>CNS: Displays event added successfully message
