@@ -60,8 +60,8 @@ sequenceDiagram
 
     break If request fails
         S-->>AS: Error response
-        AS->>CNVM: Response
-        CNVM->>TVM: error message
+        AS->>CTVM: Response
+        CTVM->>TVM: error message
         TVM->>CNS: Displays error toast message
     end
 
@@ -80,8 +80,8 @@ sequenceDiagram
 
     break If request fails
         S-->>AS: Error response
-        AS->>CNVM: Response
-        CNVM->>TVM: error message
+        AS->>CEVM: Response
+        CEVM->>TVM: error message
         TVM->>CNS: Displays error toast message
     end
 
