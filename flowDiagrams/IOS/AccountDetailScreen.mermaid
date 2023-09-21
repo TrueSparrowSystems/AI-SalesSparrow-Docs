@@ -4,6 +4,7 @@ sequenceDiagram
     participant B as Browser
     participant CNS as CreateNoteScreen
     participant CTS as CreateTaskScreen
+    participant CES as CreateEventScreen
     participant ADS as AccountDetailScreen
     participant ADSVM as AccountDetailScreenViewModel
     participant NDS as NoteDetailScreen
@@ -23,6 +24,9 @@ sequenceDiagram
     ADSVM->>AS: Request to fetch Account Tasks List
     AS-->>S: Send API Request
     note right of AS: GET {api_base_url}/v1/accounts/{accountId}/tasks
+    ADSVM->>AS: Request to fetch Account Events List
+    AS-->>S: Send API Request
+    note right of AS: GET {api_base_url}/v1/accounts/{accountId}/events
     
 
     break If any of the request fails
@@ -63,8 +67,12 @@ sequenceDiagram
         ADS ->> CNS: navigate to create note screen
     else if user clicks on add task button
         ADS ->> CTS: navigate to create task screen
+    else if user clicks on add event button
+        ADS ->> CES: navigate to create event screen
     else if user clicks on delete note button
         ADS->>ADS: Delete note flow
     else if user clicks on delete task button
         ADS->>ADS: Delete task flow
+    else if user clicks on delete event button
+        ADS->>ADS: Delete event flow
     end
