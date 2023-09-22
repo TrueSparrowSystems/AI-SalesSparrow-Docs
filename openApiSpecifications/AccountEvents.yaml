@@ -208,6 +208,10 @@ paths:
                   type: string
                   format: date-time
                   example: '2023-07-21T14:12:17.000+0000'
+              required:
+                - description
+                - start_datetime
+                - end_datetime
       responses:
         '401':
           description: Unauthorized access
