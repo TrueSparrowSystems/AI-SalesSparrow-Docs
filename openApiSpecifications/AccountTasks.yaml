@@ -128,6 +128,110 @@ paths:
                 $ref: 'Components.yaml#/components/schemas/response_500'
 
   /v1/accounts/{account_id}/tasks/{task_id}:
+    get:
+      description: Fetch details of task by task id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: task_id
+          description: Task Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task_detail:
+                    type: object
+                    properties:
+                    $ref: 'Components.yaml#/components/schemas/task'
+
+    put:
+      description: Update details of a task by task ID.
+      parameters:
+        - name: account_id
+          description: Account ID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: task_id
+          description: Task ID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                crm_organization_user_id:
+                  type: string
+                  example: '00U1e000003TnVXEA1'
+                description:
+                  type: string
+                  example: 'Updated task description'
+                due_date:
+                  type: string
+                  format: date
+                  example: '2023-07-21'
+              required:
+                - crm_organization_user_id
+                - description
+                - due_date
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+
     delete:
       description: Delete task for the given task id.
       parameters: 
