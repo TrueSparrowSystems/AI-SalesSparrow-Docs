@@ -32,6 +32,8 @@ paths:
                 properties:
                   add_task_suggestions:
                     $ref: 'Components.yaml#/components/schemas/add_task_suggestions'
+                  add_event_suggestions:
+                    $ref: 'Components.yaml#/components/schemas/add_event_suggestions'
         '400':
           description: "Bad Request"
           content:

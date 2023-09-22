@@ -86,11 +86,36 @@ components:
             example: 'Call John Doe'
           due_date:
             type: string
-            description: Optional. The due date for the task in YYYY-MM-DD format.
+            description: The due date for the task in YYYY-MM-DD format.
             format: date
             example: '2023-07-20'
         required:
           - description
+          - due_date
+
+    add_event_suggestions:
+      type: array
+      items:
+        type: object
+        properties:
+          description:
+            type: string
+            description: The description of the event
+            example: 'Content of event'
+          start_datetime:
+            type: string
+            description: The start datetime for the event.
+            format: date-time
+            example: '2023-07-21T13:12:17.000+0000'
+          end_datetime:
+            type: string
+            description: The end datetime for the event.
+            format: date-time
+            example: '2023-07-21T13:12:17.000+0000'
+        required:
+          - description
+          - start_datetime
+          - end_datetime
 
     note:
       type: object
