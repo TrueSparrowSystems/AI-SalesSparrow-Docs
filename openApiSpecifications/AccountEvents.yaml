@@ -129,6 +129,107 @@ paths:
                 $ref: 'Components.yaml#/components/schemas/response_500'
 
   /v1/accounts/{account_id}/events/{event_id}:
+    get:
+      description: Fetch details of event by event id.
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: event_id
+          description: Event Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event_detail:
+                    type: object
+                    properties:
+                    $ref: 'Components.yaml#/components/schemas/event'
+
+    put:
+      description: Update details of an event by event ID.
+      parameters:
+        - name: account_id
+          description: Account ID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: event_id
+          description: Event ID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: 'Updated content of event'
+                start_datetime:
+                  type: string
+                  format: date-time
+                  example: '2023-07-21T13:12:17.000+0000'
+                end_datetime:
+                  type: string
+                  format: date-time
+                  example: '2023-07-21T14:12:17.000+0000'
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+
     delete:
       description: Delete event for the given event id.
       parameters: 
