@@ -159,6 +159,56 @@ paths:
                     type: object
                     properties:
                     $ref: 'Components.yaml#/components/schemas/note_detail'
+    
+    put:
+      description: Update details of a note by note ID.
+      parameters:
+        - name: account_id
+          description: Account ID
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: note_id
+          description: Note ID
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: 'Updated content of note'
+              required:
+                - text
+      responses:
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+        '200':
+          description: Success
+
     delete:
       description: Delete note for the given note id.
       parameters: 
