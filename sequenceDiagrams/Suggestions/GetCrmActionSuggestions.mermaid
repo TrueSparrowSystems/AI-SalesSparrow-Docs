@@ -64,12 +64,12 @@ sequenceDiagram
     openai->>wrapper: Success response
     wrapper->>lib: Response:<br>HttpResponse 
 
-    note over lib: Format Http response into GetCrmActionsSuggestionsFormatterDto <br> Sanitize due_date into YYYY-MM-DD format
+    note over lib: Format Http response into GetCrmActionsSuggestionsFormatterDto <br> Sanitize due_date into YYYY-MM-DD<br>Sanitize start_datetime, end_datetime<br> into yyyy-MM-dd'T'HH:mm:ss.SSSZ format
     lib-->>service: Response:<br>GetCrmActionsSuggestionsFormatterDto 
-    note right of service: {add_task_suggestions: [{description: "", due_date: ""}]}
+    note right of service: {add_task_suggestions: [{description: "", due_date: ""}],<br>add_event_suggestions: [{description: "", start_datetime: "", end_datetime: ""}]}
 
     service-->> controller: Response:<br>GetCrmActionsSuggestionsFormatterDto 
     controller-->>api: Response:<br>GetCrmActionsSuggestionsFormatterDto 
 
     api-->>ui: Success:200
-    note right of ui: Response body: <br> {add_task_suggestions: [{description: "", due_date: ""}]}<br><br>Response headers:<br> cookie 
+    note right of ui: Response body: <br> {add_task_suggestions: [{description: "", due_date: ""}],<br>add_event_suggestions: [{description: "", start_datetime: "", end_datetime: ""}]}<br><br>Response headers:<br> cookie 
