@@ -1,25 +1,46 @@
 sequenceDiagram
-    title Edit Event
+    title View orEdit Event
 
+    participant ADS as AccountDetailScreen
     participant EDS as EditDetailScreen/<br>EditEventScreen
     participant TVM as ToastViewModel
     participant EDSVM as EventDetailScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-    EDS->>EDSVM: Request to edit event with accountId, eventId and event details
-    EDSVM->>AS: Invoke editEvent method
-    AS-->>S: Send API Request
-    note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/events/{eventId}
+
+    ADS ->> EDS: navigate to Event detail screen with eventId and AccountId
+    EDS ->> EDSVM: Request to Fetch Event Detail with eventId
+    EDSVM ->> AS: Send API Request
+    note right of AS: GET {api_base_url}/v1/accounts/{accountId}/tasks/{eventId}
 
     break If the request fails
         S-->>AS: Error response
         AS->>EDSVM: response
-        EDSVM->>TVM: error message
-        TVM->>EDS: error message is displayed
+        EDSVM->>EDS: error message
+        note over EDS: display error message
     end
 
     S-->>AS: Success response
-    AS->>EDSVM: Response
-    EDSVM->>EDS: Response message
-    note over EDS: Event is Updated
+    AS->>EDSVM: response
+    EDSVM->>EDS: Propagates response
+    note over EDS: Displays event details
+    
+    alt if edit event flow
+        EDS->>EDSVM: Request to edit event with accountId, eventId and event details
+        EDSVM->>AS: Invoke editEvent method
+        AS-->>S: Send API Request
+        note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/events/{eventId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>EDSVM: response
+            EDSVM->>TVM: error message
+            TVM->>EDS: error message is displayed
+        end
+
+        S-->>AS: Success response
+        AS->>EDSVM: Response
+        EDSVM->>EDS: Response message
+        note over EDS: Event is Updated
+    end
