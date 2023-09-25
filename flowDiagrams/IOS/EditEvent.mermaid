@@ -1,25 +1,25 @@
 sequenceDiagram
     title Edit Event
 
-    participant EES as EditEventScreen
+    participant EDS as EditDetailScreen/<br>EditEventScreen
     participant TVM as ToastViewModel
-    participant EEVM as EditEventScreenViewModel
+    participant EDSVM as EventDetailScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-    EES->>EEVM: Request to edit event with accountId, eventId and event details
-    EEVM->>AS: Invoke editEvent method
+    EDS->>EDSVM: Request to edit event with accountId, eventId and event details
+    EDSVM->>AS: Invoke editEvent method
     AS-->>S: Send API Request
     note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/events/{eventId}
 
     break If the request fails
         S-->>AS: Error response
-        AS->>EEVM: response
-        EEVM->>TVM: error message
-        TVM->>EES: error message is displayed
+        AS->>EDSVM: response
+        EDSVM->>TVM: error message
+        TVM->>EDS: error message is displayed
     end
 
     S-->>AS: Success response
-    AS->>EEVM: Response
-    EEVM->>EES: Response message
-    note over EES: Event is Updated
+    AS->>EDSVM: Response
+    EDSVM->>EDS: Response message
+    note over EDS: Event is Updated
