@@ -23,6 +23,8 @@ Here you will find all the sequence diagrams for the API endpoints.
   - [Create Account Task](./AccountTasks/CreateTask.mermaid)
   - [Get Account Tasks List](./AccountTasks/GetTasksList.mermaid)
   - [Delete Account Task](./AccountTasks/DeleteTask.mermaid)
+  - [Update Account Task](./AccountTasks/UpdateTask.mermaid)
+  - [Get Account Task By Id](./AccountTasks/GetTaskById.mermaid)
 
 - Account Events
   - [Create Account Event](./AccountEvents/CreateEvent.mermaid)

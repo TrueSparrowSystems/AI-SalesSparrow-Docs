@@ -1,0 +1,77 @@
+sequenceDiagram
+title Update Account Task API
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Task Controller
+    participant service as UpdateTask Service
+    participant factory as UpdateTask Factory
+    participant crm as Salesforce UpdateTask Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: Request: <br>PUT {api_base_url}/v1/accounts/{account_id}/tasks/{task_id}<br><br>path params:  <br>account_id (Account Id)<br>task_id (Id of the task) <br><br> request body:<br>crm_organization_user_id [Mandatory]<br>(CRM Organization userId for assigning task to User)<br>description [Mandatory] (Description of Task)<br>due_date [Mandatory] (Due Date of Task)
+
+    note over api: Validate and fetch current user data from cookie<br>set currentUser attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If currentUser not found
+        api-->>ui: Return 401 Error Response<br>currentUser Not Found
+    end
+
+    note over api: UpdateTaskDto  {<br>crmOrganizationUserId,<br>description,<br>dueDate<br>}
+    api->>validator: Validate path and body params
+
+    break 
+        alt If mandatory params not present in the body    
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        else If description character length > 32000
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        else If start_datetime is not a valid date time format
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        else If end_datetime is not a valid date time format
+            validator->>exceptionHandler: Throws exeption
+            exceptionHandler-->>ui:Return 400 error response
+        end
+    end
+
+    validator->>controller: Send validated params<br>params: UpdateTaskDto, accountId, taskId
+    
+    controller->>service: Call updateTask method of updateTaskService<br> params: request, UpdateTaskDto, accountId, taskId
+    note over service: Get Attribute of currentUser from request<br>Which was set by interceptor
+
+    service->>factory: Call updateTask method of updateTaskFactory<br>params: currentUser, UpdateTaskDto, accountId, taskId
+    note over factory: Based on currentUser identify CRM
+
+    factory->>crm: Call updateTask method of particular CRM service<br>params: currentUser, UpdateTaskDto, accountId, taskId
+
+    note over crm: fetch salesforceUserId from request currentUser
+    break If salesforceUserId is not present in currentUser.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 401 error response 
+    end
+    note over crm: get subject as first 60 characters of description
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: PATCH<br> url: "/services/data/v58.0/sobjects/Task/{taskId}"<br>body: {<br>"Subject":@{subject},<br>"Description":@{UpdateTaskDto.description},<br>"OwnerId": @{UpdateTaskDto.crmOrganizationUserId},<br>"ActivityDate": @{UpdateTaskDto.dueDate}<br>} <br>referenceId: "UpdateTask"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 500 error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+
+    crm-->>factory: Response
+    factory-->>service: Response
+    service-->> controller: Response
+    controller-->>api: Response
+
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> {}<br><br>Response headers:<br> cookie

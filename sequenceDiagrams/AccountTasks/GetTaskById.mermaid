@@ -1,0 +1,78 @@
+sequenceDiagram
+  title Get Task by Id
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Controller
+    participant service as GetTaskDetails Service
+    participant factory as GetTaskDetails Factory
+    participant crm as Salesforce GetTaskDetails Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: <br>GET {api_base_url}/accounts/{account_id}/tasks/{task_id}<br><br>path params:  <br>task_id [mandatory] <br>account_id [mandatory] 
+
+    note over api: Validate and fetch current user data from cookie<br>set currentUser attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If currentUser not found
+        api-->>ui: Return 401 Error Response<br>currentUser Not Found
+    end
+
+    api->>validator: Validate path params
+
+    break If mandatory params not present in the body
+        validator->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 400 error response 
+    end
+
+    validator->>controller: Send validated params<br>params: taskId
+    
+    controller->>service: Call getTaskDetails method of GetTaskDetailsService<br> params: request, taskId
+    note over service: GetAttribute of currentUser from request<br>Which was set by interceptor
+
+    service->>factory: Call getTaskDetails method of GetTaskDetailsFactory<br>params: currentUser, taskId
+    note over factory: Based on currentUser identify CRM
+
+    factory->>crm: Call getTaskDetails method of particular CRM service<br>params: currentUser, taskId
+
+    note over crm: fetch salesforceUserId from request currentUser
+    break If salesforceUserId is not present in currentUser.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 400 error response 
+    end
+    note over crm: Escape special characters for taskId
+    note over crm: Url Encode the salesforce query string
+
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Description, ActivityDate, CreatedBy.Name, Owner.Name, LastModifiedDate FROM Task<br>WHERE Id= = @{taskId}<br>referenceId: "GetTask"<br>
+    
+    break 
+        alt If 400 or 404 error from salesforce
+        salesforce-->>CompositeRequestWrapper: Return 400 error response: INVALID_TASK_ID
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 400 error response
+        else
+        salesforce-->>CompositeRequestWrapper:  Return 500 error response
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 500 error response
+        end
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+
+    note over crm: Set Response as taskDetailResponse
+
+    note over crm: Format Salesforce Response into GetTaskDetailsFormatterDto<br><br>{task_detail:{<br>id: string,<br>creator_name: string,<br>crm_organization_user_name: string,<br>description: string,<br>due_date: date,<br>last_modified_time: datetime}}
+
+    crm-->>factory: Response:<br>GetTaskDetailsFormatterDto 
+    factory-->>service: Response:<br>GetTaskDetailsFormatterDto 
+    service-->> controller: Response:<br>GetTaskDetailsFormatterDto 
+    controller-->>api: Response:<br>GetTaskDetailsFormatterDto 
+    note right of api: {task_detail: {}}
+
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> task_detail<br><br>Response headers:<br> cookie 
