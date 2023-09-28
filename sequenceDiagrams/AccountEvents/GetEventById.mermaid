@@ -47,7 +47,7 @@ sequenceDiagram
     crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
 
     CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
-    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id,WhatId,StartDateTime,EndDateTime,Description,CreatedBy.Name,LastModifiedDate FROM Event <br>WHERE WhatId= = @{eventId}<br>referenceId: "GetEvent"<br>
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/query/?q=<br>SELECT Id, Description, CreatedBy.Name, StartDateTime, EndDateTime, LastModifiedDate FROM Event<br>WHERE Id= = @{eventId}<br>referenceId: "GetEvent"<br>
     
     break 
         alt If 400 or 404 error from salesforce
