@@ -18,6 +18,7 @@ Here you will find all the sequence diagrams for the API endpoints.
   - [Get Account Notes List](./AccountNotes/GetNotesList.mermaid)
   - [Create Account Note](./AccountNotes/CreateNote.mermaid)
   - [Delete Account Note](./AccountNotes/DeleteNote.mermaid)
+  - [Update Account Note](./AccountNotes/UpdateNote.mermaid)
 
 - Account Tasks
   - [Create Account Task](./AccountTasks/CreateTask.mermaid)
