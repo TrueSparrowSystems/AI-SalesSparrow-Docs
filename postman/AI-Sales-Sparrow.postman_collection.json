@@ -176,7 +176,7 @@
 			"name": "Notes",
 			"item": [
 				{
-					"name": "Note details",
+					"name": "Note Details",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -298,6 +298,37 @@
 								"accounts",
 								"{{account-id}}",
 								"notes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update  Note",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"Updated Sample Note\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/notes/{{note-id}}",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"notes",
+								"{{note-id}}"
 							]
 						}
 					},
@@ -442,6 +473,71 @@
 						"body": {
 							"mode": "raw",
 							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks/{{task-id}}",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"tasks",
+								"{{task-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Task Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/tasks/{{task-id}}",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"tasks",
+								"{{task-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"crm_organization_user_id\":\"0051e0000047G03AAE\",\n    \"description\": \"Updated remaining documentations\",\n    \"due_date\": \"2023-12-01\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -644,6 +740,40 @@
 					"name": "Delete Event",
 					"request": {
 						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host_url}}/api/v1/accounts/{{account-id}}/events/{{event-id}}",
+							"host": [
+								"{{host_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"{{account-id}}",
+								"events",
+								"{{event-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Event Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
