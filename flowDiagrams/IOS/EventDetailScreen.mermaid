@@ -17,7 +17,8 @@ sequenceDiagram
     break If the request fails
         S-->>AS: Error response
         AS->>EDSVM: response
-        EDSVM->>EDS: error message
+        EDSVM->>TVM: error message
+        TVM->>EDS: error message is displayed
         note over EDS: display error message
     end
 
@@ -25,7 +26,7 @@ sequenceDiagram
     AS->>EDSVM: response
     EDSVM->>EDS: Propagates response
     note over EDS: Displays event details
-    
+
     alt if edit event flow
         EDS->>EDSVM: Request to edit event with accountId, eventId and event details
         EDSVM->>AS: Invoke editEvent method
