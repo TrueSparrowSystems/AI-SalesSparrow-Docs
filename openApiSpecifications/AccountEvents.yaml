@@ -1,14 +1,14 @@
 openapi: 3.0.3
 info:
-  title: SalesSparrow Account Tasks API's
+  title: SalesSparrow Account Events API's
   description: Following api's will be called from the SalesSparrow application
   version: '1.0'
 servers:
   - url: https://sales.truesparrow.com/api
 paths:
-  /v1/accounts/{account_id}/tasks:
+  /v1/accounts/{account_id}/events:
     post:
-      description: Api will create task
+      description: Api will create the event 
       parameters:
         - name: account_id
           in: path
@@ -23,20 +23,21 @@ paths:
             schema:
               type: object
               properties:
-                crm_organization_user_id:
-                  type: string
-                  example: '00U1e000003TnVXEA1'
                 description:
                   type: string
-                  example: 'Complete remaining task'
-                due_date:
+                  example: 'Content of event'
+                start_datetime:
                   type: string
-                  format: date
-                  example: '2023-07-21'
+                  format: date-time
+                  example: '2023-07-21T13:12:17.000+0000'
+                end_datetime:
+                  type: string
+                  format: date-time
+                  example: '2023-07-21T13:12:17.000+0000'
               required:
-                - crm_organization_user_id
                 - description
-                - due_date
+                - start_datetime
+                - end_datetime
       responses:
         '201':
           description: Success
@@ -45,11 +46,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  task_id:
+                  event_id:
                     type: string
                     example: "00U1e000003TnVXEA0"
         '400':
-            description: "Bad Request"
+            description: Bad Request
             content:
               application/json:
                 schema:
@@ -72,9 +73,9 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
-
+    
     get:
-      description: Api will return list of tasks for accountId
+      description: Api will return list of events for account Id
       parameters:
         - name: account_id
           in: path
@@ -90,20 +91,20 @@ paths:
               schema:
                 type: object
                 properties:
-                  task_ids:
+                  event_ids:
                     type: array
                     items:
                       type: string
                       example: "00U1e000003TUB8EAO"
-                  task_map_by_id:
+                  event_map_by_id:
                     type: object
                     properties:
                       00U1e000003TUB8EAO:
                         type: object
                         properties:
-                        $ref: 'Components.yaml#/components/schemas/task'
+                        $ref: 'Components.yaml#/components/schemas/event'
         '400':
-            description: "Bad Request"
+            description: Bad Request
             content:
               application/json:
                 schema:
@@ -127,9 +128,9 @@ paths:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
 
-  /v1/accounts/{account_id}/tasks/{task_id}:
+  /v1/accounts/{account_id}/events/{event_id}:
     get:
-      description: Fetch details of task by task id.
+      description: Fetch details of event by event id.
       parameters: 
         - name: account_id
           description: Account Id
@@ -137,8 +138,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: task_id
-          description: Task Id
+        - name: event_id
+          description: Event Id
           in: path
           required: true
           schema:
@@ -169,13 +170,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  task_detail:
+                  event_detail:
                     type: object
                     properties:
-                    $ref: 'Components.yaml#/components/schemas/task'
+                    $ref: 'Components.yaml#/components/schemas/event'
 
     put:
-      description: Update details of a task by task ID.
+      description: Update details of an event by event ID.
       parameters:
         - name: account_id
           description: Account ID
@@ -183,8 +184,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: task_id
-          description: Task ID
+        - name: event_id
+          description: Event ID
           in: path
           required: true
           schema:
@@ -196,20 +197,21 @@ paths:
             schema:
               type: object
               properties:
-                crm_organization_user_id:
-                  type: string
-                  example: '00U1e000003TnVXEA1'
                 description:
                   type: string
-                  example: 'Updated task description'
-                due_date:
+                  example: 'Updated content of event'
+                start_datetime:
                   type: string
-                  format: date
-                  example: '2023-07-21'
+                  format: date-time
+                  example: '2023-07-21T13:12:17.000+0000'
+                end_datetime:
+                  type: string
+                  format: date-time
+                  example: '2023-07-21T14:12:17.000+0000'
               required:
-                - crm_organization_user_id
                 - description
-                - due_date
+                - start_datetime
+                - end_datetime
       responses:
         '401':
           description: Unauthorized access
@@ -233,7 +235,7 @@ paths:
           description: Success
 
     delete:
-      description: Delete task for the given task id.
+      description: Delete event for the given event id.
       parameters: 
         - name: account_id
           description: Account Id
@@ -241,8 +243,8 @@ paths:
           required: true
           schema:
             type: string
-        - name: task_id
-          description: Task Id
+        - name: event_id
+          description: Event Id
           in: path
           required: true
           schema:

@@ -86,11 +86,36 @@ components:
             example: 'Call John Doe'
           due_date:
             type: string
-            description: Optional. The due date for the task in YYYY-MM-DD format.
+            description: The due date for the task in YYYY-MM-DD format.
             format: date
             example: '2023-07-20'
         required:
           - description
+          - due_date
+
+    add_event_suggestions:
+      type: array
+      items:
+        type: object
+        properties:
+          description:
+            type: string
+            description: The description of the event
+            example: 'Content of event'
+          start_datetime:
+            type: string
+            description: The start datetime for the event.
+            format: date-time
+            example: '2023-07-21T13:12:17.000+0000'
+          end_datetime:
+            type: string
+            description: The end datetime for the event.
+            format: date-time
+            example: '2023-07-21T13:12:17.000+0000'
+        required:
+          - description
+          - start_datetime
+          - end_datetime
 
     note:
       type: object
@@ -149,7 +174,32 @@ components:
           type: string
           format: date-time
           example: "2019-10-12T07:20:50.52Z"
-    
+
+    event:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "00U1e000003TUB8EAO"
+        creator_name:
+          type: string
+          example: "xyz"
+        description: 
+          type: string
+          example: "Event Content"
+        start_datetime:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+        end_datetime:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+        last_modified_time:
+          type: string
+          format: date-time
+          example: "2019-10-12T07:20:50.52Z"
+          
     crm_organization_user:
       type: object
       properties:

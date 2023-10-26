@@ -9,7 +9,7 @@ servers:
 paths:
   /v1/suggestions/crm-actions:
     post:
-      description: Api will return suggestions for tasks
+      description: Api will return suggestions for tasks and events
       requestBody:
         required: true
         content:
@@ -32,6 +32,8 @@ paths:
                 properties:
                   add_task_suggestions:
                     $ref: 'Components.yaml#/components/schemas/add_task_suggestions'
+                  add_event_suggestions:
+                    $ref: 'Components.yaml#/components/schemas/add_event_suggestions'
         '400':
           description: "Bad Request"
           content:
