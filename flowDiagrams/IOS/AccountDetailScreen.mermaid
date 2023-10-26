@@ -5,9 +5,11 @@ sequenceDiagram
     participant CNS as CreateNoteScreen
     participant CTS as CreateTaskScreen
     participant CES as CreateEventScreen
+    participant EDS as EventDetailScreen
+    participant TDS as TaskDetailScreen
+    participant NDS as NoteDetailScreen
     participant ADS as AccountDetailScreen
     participant ADSVM as AccountDetailScreenViewModel
-    participant NDS as NoteDetailScreen
     participant NDSVM as NoteDetailScreenViewModel
     participant TVM as ToastViewModel
     participant AS as ApiService
@@ -42,25 +44,13 @@ sequenceDiagram
     note over ADS: Displays account details, contact details, notes list, tasks list and events list
     alt if user clicks on link
         ADS ->> B: Open URL
-    else if user clicks on any notes 
-        ADS ->> NDS: navigate to note detail screen with Note Id and Account Id
-        NDS ->> NDSVM: Request to Fetch Note Detail with Note Id
-        NDSVM ->> AS: Send API Request
-        note right of AS: GET {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
-
-        break If any of the request fails
-            S-->>AS: Error response
-            AS->>NDSVM: response
-            NDSVM->>NDS: error message
-            note over NDS: display error message
-
-        end
-
-        S-->>AS: Success response
-        AS->>NDSVM: response
-        NDSVM->>NDS: Propagates response
-        note over NDS: Displays note details
-
+    end
+    alt if user clicks on a note or edit note
+        ADS ->> NDS: trigger note detail screen flow
+    else if user clicks on a task or edit task
+        ADS ->> TDS: trigger task detail screen flow
+    else if user clicks on a event or edit event
+        ADS ->> EDS: trigger event detail screen flow
     end
 
     alt if user clicks on add note button
