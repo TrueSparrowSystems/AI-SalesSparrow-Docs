@@ -46,10 +46,10 @@ sequenceDiagram
         ADS ->> B: Open URL
     end
     alt if user clicks on a note or edit note
-        ADS ->> NDS: trigger note detail flow flow
+        ADS ->> NDS: trigger note detail screen flow
     else if user clicks on a task or edit task
         ADS ->> TDS: trigger task detail screen flow
-    else if user clicks on a event or edit events
+    else if user clicks on a event or edit event
         ADS ->> EDS: trigger event detail screen flow
     end
 

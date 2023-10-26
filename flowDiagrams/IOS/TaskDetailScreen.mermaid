@@ -1,14 +1,13 @@
 sequenceDiagram
     title View or Edit Task
 
-    participant ADS as AccountDetailScreen
     participant TDS as TaskDetailScreen/<br>EditTaskScreen
     participant TVM as ToastViewModel
     participant TDSVM as TaskDetailScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-     ADS ->> TDS: navigate to Task detail screen with taskId and AccountId
+        note over TDS: User navigates to Task detail screen with taskId and AccountId
         TDS ->> TDSVM: Request to Fetch Task Detail with task Id
         TDSVM ->> AS: Send API Request
         note right of AS: GET {api_base_url}/v1/accounts/{accountId}/tasks/{taskId}

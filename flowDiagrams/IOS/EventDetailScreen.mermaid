@@ -1,7 +1,6 @@
 sequenceDiagram
     title View or Edit Event
 
-    participant ADS as AccountDetailScreen
     participant EDS as EventDetailScreen/<br>EditEventScreen
     participant TVM as ToastViewModel
     participant EDSVM as EventDetailScreenViewModel
@@ -9,10 +8,10 @@ sequenceDiagram
     participant S as Server
 
 
-    ADS ->> EDS: navigate to Event detail screen with eventId and AccountId
+    note over EDS: User navigates to Event detail screen with eventId and AccountId
     EDS ->> EDSVM: Request to Fetch Event Detail with eventId
     EDSVM ->> AS: Send API Request
-    note right of AS: GET {api_base_url}/v1/accounts/{accountId}/tasks/{eventId}
+    note right of AS: GET {api_base_url}/v1/accounts/{accountId}/events/{eventId}
 
     break If the request fails
         S-->>AS: Error response

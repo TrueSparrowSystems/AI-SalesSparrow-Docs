@@ -1,14 +1,13 @@
 sequenceDiagram
     title View or Edit Note
 
-    participant ADS as AccountDetailScreen
     participant NDS as NoteDetailScreen/<br>EditNoteScreen
     participant TVM as ToastViewModel
     participant NDSVM as NoteDetailScreenViewModel
     participant AS as ApiService
     participant S as Server
 
-    ADS ->> NDS: navigate to note detail screen with Note Id and Account Id
+        note over NDS: User navigates to note detail screen with Note Id and Account Id
         NDS ->> NDSVM: Request to Fetch Note Detail with Note Id
         NDSVM ->> AS: Send API Request
         note right of AS: GET {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
