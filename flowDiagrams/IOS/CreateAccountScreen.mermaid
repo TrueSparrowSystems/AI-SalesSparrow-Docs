@@ -1,0 +1,47 @@
+sequenceDiagram
+    title Account Creation and Edit flow
+
+    participant ADS as AccountDetailScreen
+    participant CAS as CreateAccountScreen
+    participant CASVM as CreateAccountScreenViewModel
+    participant TVM as ToastViewModel
+    participant AS as ApiService
+    participant S as Server
+
+    CAS->>CASVM: Request to create account with its details
+    CASVM->>AS: Request to create account
+    AS-->>S: Request: create account
+    note right of AS: POST {api_base_url}/v1/accounts
+
+    break If the request fails
+        S-->>AS: Error response
+        AS->>TVM: response
+        TVM->>CAS: error message
+        note over CAS: display error message
+    end
+
+    S-->>AS: Success response
+    AS->>CASVM: response
+    CASVM->>CAS: Propagates response
+    note over CAS: Displays success message: account is created
+    
+    alt if edit Account Flow
+        ADS->>CAS: display account details to edit
+        CAS->>CASVM: Request to edit account details
+        CASVM->>AS: Request to edit account
+        AS-->>S: Request: edit account
+        note right of AS: PUT {api_base_url}/v1/accounts/{accountId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>TVM: response
+            TVM->>CAS: error message
+            note over CAS: display error message
+        end
+
+        S-->>AS: Success response
+        AS->>CASVM: response
+        CASVM->>CAS: Propagates response
+        CAS->>ADS: navigate back
+        note over CAS: Displays success message: account details are updated.
+    end
