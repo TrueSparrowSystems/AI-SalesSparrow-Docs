@@ -17,4 +17,3 @@ Please find below the list of detailed flow diagrams of all the flows in the iOS
 - [Delete Event](./DeleteEvent.mermaid) - Delete unwanted events from Account details screen.
 - [Event Detail and Edit](./EventDetailScreen.mermaid) - View or Edit Event details and its content.
 - [User Account Detail](./UserAccountDetailScreen.mermaid) - User can logout and disconnect SalesForce.
-- [CRM User Search](./CrmUserSearchScreen.mermaid) - Search user to assign a task.
