@@ -63,6 +63,177 @@ paths:
             application/json:
               schema:
                 $ref: 'Components.yaml#/components/schemas/response_500'
+
+    post: 
+      description: Api will create a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Account Name'
+                website:
+                  type: string
+                  example: 'https://www.website.com'
+                status:
+                  type: string
+                  example: 'Ready To Inspect'
+                establishment_year:
+                  type: string
+                  example: '2023'
+              required:
+                - account_name
+                - website
+                - status
+                - establishment_year
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_id:
+                    type: string
+                    example: "00U1e000003TnVXEA0"
+        '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500'
+
+  /v1/accounts/{account_id}:
+    put: 
+      description: Api will update the account for given account id
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Account Name'
+                website:
+                  type: string
+                  example: 'https://www.website.com'
+                status:
+                  type: string
+                  example: 'Ready To Inspect'
+                establishment_year:
+                  type: string
+                  example: '2023'
+              required:
+                - account_name
+                - website
+                - status
+                - establishment_year
+      responses:
+        '200':
+          description: Success
+        '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500' 
+  
+    get: 
+      description: Api will get the account details for given account id
+      parameters: 
+        - name: account_id
+          description: Account Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_detail:
+                    type: object
+                    properties:
+                    $ref: 'Components.yaml#/components/schemas/account'
+        '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: 'Components.yaml#/components/schemas/response_400'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_404'
+        '500':
+          description: Something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: 'Components.yaml#/components/schemas/response_500' 
+
                 
   /v1/accounts/feed:
     get:

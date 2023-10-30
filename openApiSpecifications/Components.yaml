@@ -24,14 +24,26 @@ components:
           type: string
           description: Account name
           example: "Sample account"
+        website:
+          type: string
+          description: Website url
+          example: "www.xyz.com"
+        status:
+          type: string
+          description: Account status
+          example: "active"
+        establishment_year:
+          type: string
+          description: Establishment year
+          example: "2019"
         additional_fields:
           type: object
           description: Additional fields for the account
           properties:
-            website:
+            headquarters:
               type: string
-              description: Website url (Optional)
-              example: "www.xyz.com"
+              description: Headquarters (Optional)
+              example: "Europe"
         account_contact_associations_id:
           type: string
           description: ID of associated account contact association (Optional)
