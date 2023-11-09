@@ -340,49 +340,50 @@ paths:
                 type: object
                 properties:
                   fields:
-                    type: array
-                    description: List of Account Fields
-                    items:
-                      type: object
-                      properties:
-                        label:
-                          type: string
-                          example: "Account Name"
-                          description: The label of the field
-                        length:
-                          type: integer
-                          example: 255
-                          description: The maximum length of the field
-                        name:
-                          type: string
-                          example: "Account Name"
-                          description: The name of the field
-                        type:
-                          type: string
-                          example: "string"
-                          description: The data type of the field
-                        picklistValues:
-                          type: array
-                          description: Picklist values (if the field type is picklist)
-                          items:
-                            type: object
-                            properties:
-                              active:
-                                type: boolean
-                                example: true
-                                description: Whether the picklist value is active
-                              label:
-                                type: string
-                                example: "Test Account"
-                                description: The label of the picklist value
-                              value:
-                                type: string
-                                example: "Test Account"
-                                description: The value of the picklist value
-                        defaultValue:
-                          type: string
-                          example: "Test Account"
-                          description: Default value (if applicable)
+                    type: object
+                    description: Account Fields
+                    properties:
+                      label:
+                        type: object
+                        properties:
+                          label:
+                            type: string
+                            example: "Account Name"
+                            description: The label of the field
+                          length:
+                            type: integer
+                            example: 255
+                            description: The maximum length of the field
+                          name:
+                            type: string
+                            example: "Account Name"
+                            description: The name of the field
+                          type:
+                            type: string
+                            example: "string"
+                            description: The data type of the field
+                          picklistValues:
+                            type: array
+                            description: Picklist values (if the field type is picklist)
+                            items:
+                              type: object
+                              properties:
+                                active:
+                                  type: boolean
+                                  example: true
+                                  description: Whether the picklist value is active
+                                label:
+                                  type: string
+                                  example: "Test Account"
+                                  description: The label of the picklist value
+                                value:
+                                  type: string
+                                  example: "Test Account"
+                                  description: The value of the picklist value
+                          defaultValue:
+                            type: string
+                            example: "Test Account"
+                            description: Default value (if applicable)
         '400':
             description: "Bad Request"
             content:
