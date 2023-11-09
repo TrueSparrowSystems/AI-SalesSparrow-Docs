@@ -79,10 +79,10 @@ paths:
                 website:
                   type: string
                   example: 'https://www.website.com'
-                status:
+                status__c:
                   type: string
                   example: 'Ready To Inspect'
-                establishment_year:
+                establishment_year__c:
                   type: string
                   example: '2023'
               required:
@@ -205,10 +205,26 @@ paths:
               schema:
                 type: object
                 properties:
-                  account_detail:
+                  account:
                     type: object
                     properties:
                     $ref: 'Components.yaml#/components/schemas/account'
+                  contact_map_by_id:
+                    type: object
+                    description: Map of contacts by ID
+                    properties:
+                      "abcd1234abcd":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/contact'    
+                  account_contact_associations_map_by_id:
+                    type: object
+                    description: Map of account contact associations by ID
+                    properties:
+                      "abc1234abc":
+                        type: object
+                        properties:
+                        $ref: 'Components.yaml#/components/schemas/account_contact_association'
         '400':
             description: Bad Request
             content:
