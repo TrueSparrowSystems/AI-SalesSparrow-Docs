@@ -216,7 +216,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Test Data\",\n    \"Website\": \"abc\",\n    \"Status__c\": \"Ready To Inspect\",\n    \"Establishment_Year__c\": \"2023\"\n}",
+							"raw": "{\n    \"Name\": \"Test Data\",\n    \"Website\": \"abc\",\n    \"Status__c\": \"Ready To Inspect\",\n    \"Establishment_Year__c\": \"2023\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
