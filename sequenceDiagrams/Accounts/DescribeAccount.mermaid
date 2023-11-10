@@ -1,0 +1,60 @@
+sequenceDiagram
+  title Describe Accounts
+    participant ui as SalesSparrow Client
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Controller
+    participant service as DescribeAccount Service
+    participant factory as DescribeAccount Factory
+    participant crm as Salesforce DescribeAccount Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: POST {api_base_url}/v1/accounts/describe<br>
+
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If current_user not found
+        api-->>ui: Return 401 Error Response<br>current_user Not Found
+    end
+
+    api->>controller: 
+    
+    controller->>service: Call describeAccount method of DescribeAccountService<br> params: request
+    note over service: GetAttribute of current_user from request<br>Which was set by interceptor
+
+    service->>factory: Call describeAccount method of DescribeAccountFactory<br>params: current_user
+    note over factory: Based on currentUser identify CRM
+
+    factory->>crm: Call describeAccount method of particular CRM service<br>params: currentUser, q, viewKind: BASIC, offset: 0
+
+    note over crm: Fetch salesforceUserId from request currentUser
+    break If salesforceUserId is not present in currentUser.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 400 error response 
+    end
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: POST {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: GET<br> url: "/services/data/v58.0/describe<br>referenceId: "DescribeAccount"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Return 500 error response
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 500 error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+    note over crm:  Format Salesforce Response into DescribeAccountFormatterDto
+
+    crm-->>factory: Response:<br>DescribeAccountFormatterDto
+    factory-->>service: Response:<br>DescribeAccountFormatterDto
+    service-->> controller: Response:<br>DescribeAccountFormatterDto <br>{fields: map[string][DescribeAccountFieldEntity]}<br><br>DescribeAccountFieldEntity:{<br>label: string,<br>name: string,<br>length: int,<br>type: string,<br>defaultValue: string,<br>precision: int,<br>scale: int,<br>picklistValues: []{label: string, name: string, active:bool}}
+    controller-->>api: Response:<br>DescribeAccountFormatterDto
+    note right of api: {<br>fields:{}}
+
+    api-->>ui: Success:200
+    note right of ui: Response body: <br> {<br>fields: {}<br>}<br><br>Response headers:<br> cookie 
+    
