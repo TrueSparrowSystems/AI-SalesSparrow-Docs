@@ -1,0 +1,44 @@
+sequenceDiagram
+    title View or Edit Task
+
+    participant TDS as TaskDetailScreen/<br>EditTaskScreen
+    participant TVM as ToastViewModel
+    participant TDSVM as TaskDetailScreenViewModel
+    participant AS as ApiService
+    participant S as Server
+
+        note over TDS: User navigates to Task detail screen with taskId and AccountId
+        TDS ->> TDSVM: Request to Fetch Task Detail with task Id
+        TDSVM ->> AS: Send API Request
+        note right of AS: GET {api_base_url}/v1/accounts/{accountId}/tasks/{taskId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>TDSVM: response
+            TDSVM->>TDS: error message
+            note over TDS: display error message
+        end
+
+        S-->>AS: Success response
+        AS->>TDSVM: response
+        TDSVM->>TDS: Propagates response
+        note over TDS: Displays task details
+    
+    alt if edit Task Flow
+        TDS->>TDSVM: Request to edit task with accountId, taskId and task details
+        TDSVM->>AS: Invoke editTask method
+        AS-->>S: Send API Request
+        note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/tasks/{taskId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>TDSVM: response
+            TDSVM->>TVM: error message
+            TVM->>TDS: error message is displayed
+        end
+
+        S-->>AS: Success response
+        AS->>TDSVM: Response
+        TDSVM->>TDS: Response message
+        note over TDS: Task is Updated
+    end

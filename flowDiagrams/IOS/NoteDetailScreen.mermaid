@@ -1,0 +1,44 @@
+sequenceDiagram
+    title View or Edit Note
+
+    participant NDS as NoteDetailScreen/<br>EditNoteScreen
+    participant TVM as ToastViewModel
+    participant NDSVM as NoteDetailScreenViewModel
+    participant AS as ApiService
+    participant S as Server
+
+        note over NDS: User navigates to note detail screen with Note Id and Account Id
+        NDS ->> NDSVM: Request to Fetch Note Detail with Note Id
+        NDSVM ->> AS: Send API Request
+        note right of AS: GET {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>NDSVM: response
+            NDSVM->>NDS: error message
+            note over NDS: display error message
+        end
+
+        S-->>AS: Success response
+        AS->>NDSVM: response
+        NDSVM->>NDS: Propagates response
+        note over NDS: Displays note details
+
+    alt if edit Note flow
+        NDS->>NDSVM: Request to edit note with accountId, noteId and note details
+        NDSVM->>AS: Invoke editNote method
+        AS-->>S: Send API Request
+        note right of AS: PUT {api_base_url}/v1/accounts/{accountId}/notes/{noteId}
+
+        break If the request fails
+            S-->>AS: Error response
+            AS->>NDSVM: response
+            NDSVM->>TVM: error message
+            TVM->>NDS: error message is displayed
+        end
+
+        S-->>AS: Success response
+        AS->>NDSVM: Response
+        NDSVM->>NDS: Response message
+        note over NDS: Note is Updated
+    end
