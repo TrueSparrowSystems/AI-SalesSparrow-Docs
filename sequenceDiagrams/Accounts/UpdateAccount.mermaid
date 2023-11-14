@@ -1,0 +1,64 @@
+sequenceDiagram
+  title Update Account
+    participant ui as SalesSparrow App
+    participant api as SalesSparrow API
+    participant exceptionHandler as Global Exception Handler
+    participant validator as Param Validator(Interceptor)
+    participant controller as Account Controller
+    participant service as UpdateAccount Service
+    participant factory as UpdateAccount Factory
+    participant crm as Salesforce UpdateAccount Service
+    participant CompositeRequestWrapper as CompositeRequest(Wrapper)
+    participant salesforce as Salesforce
+
+    ui->>api:  Send request 
+    note right of ui: Request: Request: <br>POST {api_base_url}/api/v1/accounts/{account_id}<br><br>path params:  <br>account_id [mandatory] <br><br> request body:<br>name (Optional)<br>website (Optional)<br>Status__c (Optional)<br>Establishment_Year__c (Optional)
+
+    note over api: Validate and fetch current user data from cookie<br>set current_user attribute in request.<br><br>Refer this document for interceptor sequence diagram <br> './docs/sequenceDiagrams/Common/UserAuthIntercepter.mermaid'
+    break If current_user not found
+        api-->>ui: Error Response<br>current_user Not Found
+    end
+
+    api->>validator: Send params: UpdateAccountBody<br>(map[string][string])
+
+    validator->>controller: Send params: UpdateAccountBody
+    
+    controller->>service: Call updateAccount method of UpdateAccountService<br> params: UpdateAccountBody
+    note over service: Get Attribute of current_user from request<br>Which was set by interceptor
+
+    service->>factory: Call updateAccount method of UpdateAccountFactory<br>params: UpdateAccountBody
+    note over factory: Based on current_user identify CRM
+
+    factory->>crm: Call updateAccount method of particular CRM service<br>params: UpdateAccountBody
+
+    note over crm: Make salesforce describe account api call <br>(Refer this document for sequence diagram)<br>'./docs/sequenceDiagrams/Accounts/DescribeAccount.mermaid'
+    break If invalid request key or value.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 400 error response 
+    end
+
+    note over crm: fetch salesforceUserId from request current_user
+    break If salesforceUserId is not present in current_user.
+        crm->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui:Return 401 error response 
+    end
+    crm->>CompositeRequestWrapper: Send compositeBody to make request to salesforce<br>params: <br> List<requestType, url, referenceId>, salesforceUserId <br>
+
+    CompositeRequestWrapper->>salesforce: Make salesforce composite api call with commmon helper function<br><br>Refer this document for commmon helper function sequence diagram <br> './docs/sequenceDiagrams/Common/OAuthRequestHelper.mermaid'
+    note right of CompositeRequestWrapper: Request: PATCH {instance_url}/services/data/v58.0/composite <br><br>Params: <br> requestType: POST<br> url: "/services/data/v58.0/sobjects/Account"<br>body: {"Name": "Test Data",<br>"Website": "abc",<br>"Status__c": "Ready To Inspect",<br>"Establishment_Year__c": "2023"} <br>referenceId: "UpdateAccount"<br>
+    
+    break If any error from salesforce
+        salesforce-->>CompositeRequestWrapper: Error
+        CompositeRequestWrapper->>exceptionHandler: Throws exeption
+        exceptionHandler-->>ui: Return 500 error response
+    end
+
+    salesforce-->>CompositeRequestWrapper: Response
+    CompositeRequestWrapper-->>crm: Response
+    crm-->>factory: Response
+    factory-->>service: Response
+    service-->> controller: Response
+    controller-->>api: Response
+
+    api-->>ui: Success:202
+    note right of ui: Response headers:<br> cookie 
