@@ -12,6 +12,9 @@ Here you will find all the sequence diagrams for the API endpoints.
 - Accounts
   - [Get Accounts](./Accounts/GetAccounts.mermaid)
   - [Get Accounts Feed](./Accounts/GetAccountsFeed.mermaid)
+  - [Describe Account](./Accounts/DescribeAccount.mermaid)
+  - [Create Account](./Accounts/CreateAccount.mermaid)
+  - [Update Account](./Accounts/UpdateAccount.mermaid)
   
 - Account Notes
   - [Get Account Note By Id](./AccountNotes/GetNoteById.mermaid)
